@@ -21,21 +21,43 @@ public final class R {
         public static final int activity_vertical_margin=0x7f040001;
     }
     public static final class drawable {
-        public static final int ic_launcher=0x7f020000;
+        public static final int home2=0x7f020000;
+        public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
-        public static final int action_settings=0x7f080000;
+        public static final int action_settings=0x7f080009;
+        public static final int btnCancel=0x7f080004;
+        public static final int btnLogin=0x7f080007;
+        public static final int btnReg=0x7f080003;
+        public static final int header=0x7f080000;
+        public static final int link_to_register=0x7f080008;
+        public static final int nameLogin=0x7f080005;
+        public static final int nameReg=0x7f080001;
+        public static final int passwdLogin=0x7f080006;
+        public static final int passwdReg=0x7f080002;
     }
     public static final class layout {
         public static final int activity_la_fosca_main=0x7f030000;
+        public static final int activity_register=0x7f030001;
+        public static final int login=0x7f030002;
     }
     public static final class menu {
         public static final int la_fosca_main=0x7f070000;
+        public static final int register=0x7f070001;
     }
     public static final class string {
-        public static final int action_settings=0x7f050001;
+        public static final int action_=0x7f050001;
+        public static final int action_settings=0x7f05000b;
         public static final int app_name=0x7f050000;
         public static final int hello_world=0x7f050002;
+        public static final int homeimg=0x7f050003;
+        public static final int name=0x7f050004;
+        public static final int passwd=0x7f050005;
+        public static final int regLink=0x7f050009;
+        public static final int textBtnCancel=0x7f050008;
+        public static final int textBtnLogin=0x7f050006;
+        public static final int textBtnReg=0x7f050007;
+        public static final int title_activity_register=0x7f05000a;
     }
     public static final class style {
         /** 
