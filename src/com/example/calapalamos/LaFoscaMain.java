@@ -6,6 +6,8 @@ import android.view.Menu;
 
 public class LaFoscaMain extends Activity {
 
+	private static String url = "http://lafosca-beach.herokuapp.com/api/v1";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
