@@ -1,8 +1,24 @@
 package com.example.calapalamos;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,7 +33,7 @@ public class RegisterActivity extends Activity implements OnClickListener {
     EditText passwdReg;
     Button btnReg;
     Button btnCancel;
-
+    
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +56,33 @@ public class RegisterActivity extends Activity implements OnClickListener {
         
         case R.id.btnReg:
         	if(nameReg.getText().length()!=0 && passwdReg.getText().length()!=0) {
-               Toast.makeText(getBaseContext(), "Data! ", Toast.LENGTH_LONG).show();
-               String nR = nameReg.getText().toString();
-               String pR = passwdReg.getText().toString();
+        	   User n = new User();
+               /*JSONObject jLogin = new JSONObject();
+               JSONObject jUser = new JSONObject();*/
+               /*JSONParser jParser = new JSONParser();*/
+               //try {
+				     /*jUser.put("username",nameReg.getText().toString());
+				     jUser.put("password",passwdReg.getText().toString());
+				     jLogin.put("user", jUser);*/
+				     //Toast.makeText(getBaseContext(), "Data! "+jLogin.getJSONObject("user").getString("username"), Toast.LENGTH_LONG).show();
+		             n.setName(nameReg.getText().toString());
+		             n.setPasswd(passwdReg.getText().toString());
+		             //Log.d("RegisterActivity", "before Jsonparser");
+		             //Toast.makeText(getBaseContext(), "Data! "+jParser.jPOST(url,jLogin), Toast.LENGTH_LONG).show()
+		             
+		             i.putExtra("REGISTER1", nameReg.getText().toString());
+		             i.putExtra("REGISTER2", passwdReg.getText().toString());
+		             setResult(RESULT_OK, i);
+				     
+				     
+               /*} catch (JSONException e) {
+				// TODO Auto-generated catch block
+            	   
+            	   Log.e("Error JSON Login",null);
+				   e.printStackTrace();
+               }*/
                
-               i.putExtra("REGISTER1", nR);
-               i.putExtra("REGISTER2", pR);
-               setResult(RESULT_OK, i);
+
                finish();
                
         	}else{
@@ -74,5 +110,4 @@ public class RegisterActivity extends Activity implements OnClickListener {
 		return true;
 	}
 
-	
-}
+}	
