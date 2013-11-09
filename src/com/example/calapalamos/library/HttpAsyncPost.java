@@ -1,4 +1,4 @@
-package com.example.calapalamos;
+package com.example.calapalamos.library;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,15 +18,15 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
+public class HttpAsyncPost extends AsyncTask<JSONObject, Void, String>{
 	
 	
-	private String url = "http://lafosca-beach.herokuapp.com/api/v1";
+	
 	private ProgressDialog pDialog;
 	private Context context;
     private String option;
     
-	public HttpAsync(Context cont, String opt) {
+	public HttpAsyncPost(Context cont, String opt) {
 		// TODO Auto-generated constructor stub
 	   this.context = cont;
 	   this.option = opt;
@@ -53,7 +53,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
     protected void onPreExecute() {
         super.onPreExecute();
         pDialog = new ProgressDialog(getContext());
-        pDialog.setMessage("Downloading contacts...");
+        pDialog.setMessage("Sending User...");
         pDialog.show();
         
 	}
@@ -65,7 +65,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
         try {
         HttpClient client = new DefaultHttpClient();
 
-        HttpPost httpPost = new HttpPost(url+"/users");
+        HttpPost httpPost = new HttpPost(Constants.url+Constants.SUFIX_REGISTER);
 
         String json = "";
         
