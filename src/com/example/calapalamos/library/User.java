@@ -1,4 +1,4 @@
-package com.example.calapalamos;
+package com.example.calapalamos.library;
 
 public class User {
 	
