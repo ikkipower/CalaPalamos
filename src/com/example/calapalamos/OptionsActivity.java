@@ -3,14 +3,14 @@
  */
 package com.example.calapalamos;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 
+
+import com.example.calapalamos.library.MiTabListener;
+
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 
 /**
@@ -21,8 +21,8 @@ import android.widget.ListView;
 public class OptionsActivity extends Activity {
 
 	private String AuthToken;
-	private ListView optionsLV;
-	private String[] options = new String[]{"Abrir/Cerrar la Playa","Cambiar Bandera","Lanzar Pelotas","Listado de Ni–os"};
+	//private ListView optionsLV;
+	//private String[] options = new String[]{"Abrir/Cerrar la Playa","Cambiar Bandera","Lanzar Pelotas","Listado de Ni–os"};
 	
 	public void setAuthToken(String auth){
 		this.AuthToken = auth;
@@ -36,19 +36,28 @@ public class OptionsActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_options);
-		
-		// Introducimos las opciones del menu en el ListView   
-	    optionsLV = (ListView) findViewById( R.id.listView1 );
-	    
-	    ArrayList<String> optArrList = new ArrayList<String>();  
-	    optArrList.addAll( Arrays.asList(options) );  
-	    ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, optArrList);
-	    
-	    optionsLV.setAdapter( listAdapter );
-		
-		//recogemos el dato del token
-	    setAuthToken(getIntent().getExtras().getString("AuthToken"));
-	    Log.d("OptionsActivity",getAuthToken());
+
+		//Obtenemos una referencia a la actionbar
+	    ActionBar abar = getActionBar();
+	 
+	    //Establecemos el modo de navegaci—n por pesta–as
+	    abar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+	 
+	    //Creamos las pesta–as
+	    ActionBar.Tab tab1 = abar.newTab().setText("State");
+	    ActionBar.Tab tab2 = abar.newTab().setText("Change");
+	 
+	    //Creamos los fragments de cada pesta–a
+	    Fragment tab1frag = new Tab1State();
+	    Fragment tab2frag = new Tab2Opt();
+	 
+	    //Asociamos los listener a las pesta–as
+	    tab1.setTabListener(new MiTabListener(tab1frag));
+	    tab2.setTabListener(new MiTabListener(tab2frag));
+	 
+	    //A–adimos las pesta–as a la action bar
+	    abar.addTab(tab1);
+	    abar.addTab(tab2);
 	}
 	
 	

@@ -187,10 +187,10 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 						
 						
 	                      
-	                    /*Intent intent = new Intent(LaFoscaMain.this, OptionsActivity.class);
-						intent.putExtra("username", username);
-						intent.putExtra("AuthToken", authToken);
-						startActivity(intent);*/
+	                    Intent intent = new Intent(LaFoscaMain.this, OptionsActivity.class);
+						intent.putExtra("username", user.getName());
+						intent.putExtra("AuthToken", user.getAuthToken());
+						startActivity(intent);
 						
 						/*httpput.setHeader("Authorization", "Token token="
                                 + authenticationToken);*/

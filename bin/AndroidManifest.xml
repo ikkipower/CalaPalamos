@@ -4,11 +4,13 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="19" />
+    <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -30,6 +32,18 @@
         <activity
             android:name="com.example.calapalamos.OptionsActivity"
             android:label="@string/title_activity_options" >
+        </activity>
+        <activity
+            android:name="com.example.calapalamos.Tab1State"
+            android:label="@string/title_activity_tab1_state" >
+        </activity>
+        <activity
+            android:name="com.example.calapalamos.Tab2Opt"
+            android:label="@string/title_activity_tab2_opt" >
+        </activity>
+        <activity
+            android:name="com.example.calapalamos.library.MiTabListener"
+            android:label="@string/title_activity_mi_tab_listener" >
         </activity>
     </application>
 
