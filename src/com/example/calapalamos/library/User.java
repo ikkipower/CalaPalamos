@@ -3,26 +3,31 @@ package com.example.calapalamos.library;
 public class User {
 	
 	private String name;
-	private String passwd;
+	private String AuthToken;
 
 	public User(){
 		this.name = "";
-		this.passwd = "";
+		this.AuthToken = "";
+	}
+
+	public User(String n, String token){
+		this.name = n;
+		this.AuthToken = token;
 	}
 	
 	public void setName(String n){
 		this.name = n;
 	}
 	
-	public void setPasswd(String p){
-		this.passwd = p;
+	public void setAuthToken(String p){
+		this.AuthToken = p;
 	}
 	
 	public String getName(){
 		return this.name;
 	}
 	
-	public String getPasswd(){
-		return this.passwd;
+	public String getAuthToken(){
+		return this.AuthToken;
 	}
 }

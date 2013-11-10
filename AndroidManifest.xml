@@ -27,6 +27,10 @@
             android:name="com.example.calapalamos.RegisterActivity"
             android:label="@string/title_activity_register" >
         </activity>
+        <activity
+            android:name="com.example.calapalamos.OptionsActivity"
+            android:label="@string/title_activity_options" >
+        </activity>
     </application>
 
 </manifest>

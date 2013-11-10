@@ -1,7 +1,5 @@
 package com.example.calapalamos;
 
-import com.example.calapalamos.library.User;
-
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -42,12 +40,9 @@ public class RegisterActivity extends Activity implements OnClickListener {
         
         case R.id.btnReg:
         	if(nameReg.getText().length()!=0 && passwdReg.getText().length()!=0) {
-        	   User n = new User();
-            
-		      n.setName(nameReg.getText().toString());
-		      n.setPasswd(passwdReg.getText().toString());
-		      i.putExtra("REGISTER1", n.getName());
-		      i.putExtra("REGISTER2", n.getPasswd());
+
+		      i.putExtra("REGISTER1", nameReg.getText().toString());
+		      i.putExtra("REGISTER2", passwdReg.getText().toString());
 		      setResult(RESULT_OK, i);
 				     
 
