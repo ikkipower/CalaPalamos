@@ -175,7 +175,8 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 			            	jUser.put("authenticationToken",user.getAuthToken());
 					        jReg.put("user", jUser);
 					        HttpAsync aStateTask = new HttpAsync(LaFoscaMain.this,Constants.GSTATE_OPT);  
-		                    aStateTask.execute(jReg);
+		                    aStateTask.setOnResultListener(asynResult);
+					        aStateTask.execute(jReg);
 			            } catch (JSONException e) {
 							// TODO Auto-generated catch block
 			            	   
@@ -187,10 +188,7 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 						
 						
 	                      
-	                    Intent intent = new Intent(LaFoscaMain.this, OptionsActivity.class);
-						intent.putExtra("username", user.getName());
-						intent.putExtra("AuthToken", user.getAuthToken());
-						startActivity(intent);
+	                    
 						
 						/*httpput.setHeader("Authorization", "Token token="
                                 + authenticationToken);*/
@@ -198,6 +196,34 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 				}
 			});
 			
+		}
+		
+		@Override
+		public void onStateResult(boolean resultCode, final JSONObject j) {
+		   
+			// TODO Auto-generated method stub
+/*			runOnUiThread(new Runnable() {
+				public void run() { */
+ 		           try{
+                       
+                       Intent intent = new Intent(LaFoscaMain.this, OptionsActivity.class);
+					   intent.putExtra("username", user.getName());
+					   intent.putExtra("AuthToken", user.getAuthToken());
+					   intent.putExtra("state", j.toString());
+					   startActivity(intent);
+		           }catch(Exception e) {
+			          Log.d("JSON onStateResult", e.getLocalizedMessage());
+		           }
+/*				}
+			});*/
+		
+			
+			
+			// TODO Auto-generated method stub
+			/*Intent intent = new Intent(LaFoscaMain.this, OptionsActivity.class);
+		intent.putExtra("username", user.getName());
+		intent.putExtra("AuthToken", user.getAuthToken());
+		startActivity(intent);*/	
 		}  
     };
 	

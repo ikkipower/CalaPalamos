@@ -1,6 +1,6 @@
 package com.example.calapalamos.library;
 
-import android.R;
+
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -24,7 +24,7 @@ public class MiTabListener implements ActionBar.TabListener {
         @Override
         public void onTabSelected(Tab tab, FragmentTransaction ft) {
                 Log.i("ActionBar", tab.getText() + " seleccionada.");
-                ft.replace(R.id.content, fragment);
+                ft.replace(android.R.id.content, fragment);
         }
         
         @Override

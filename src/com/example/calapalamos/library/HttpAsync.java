@@ -28,14 +28,17 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
     private String option;
 	private String AuthToken;
 
-    /*interface data*/
+    /*interface data LaFoscaMain*/
     OnAsyncResult onAsyncResult;  
     public void setOnResultListener(OnAsyncResult onAsyncResult) {  
        if (onAsyncResult != null) {  
           this.onAsyncResult = onAsyncResult;  
        }  
-    }  	
-	
+    }
+    
+    
+ 
+    
 	public HttpAsync(Context cont, String opt) {
 		// TODO Auto-generated constructor stub
 		   this.context = cont;
@@ -100,9 +103,11 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	  */
 	   
 	    public interface OnAsyncResult {  
-	    	public abstract void onResult(boolean resultCode, String message);  
+	    	public abstract void onResult(boolean resultCode, String message);
+	    	public abstract void onStateResult(boolean resultCode, JSONObject j);
 	    }  
-	    
+	        
+
 		
 		 public String regFunct(JSONObject j){
 			 InputStream inputStream = null;
@@ -221,7 +226,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	        return tmp;
 
 	    }
-	    
+	   
 	    
 	    private String manageInputStream(InputStream inputStream) throws IOException{
 	       BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
@@ -247,10 +252,34 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	    		  onAsyncResult.onResult(false,"Failed"); 
 	    	   }
 	       }else{
-		       while((line = bufferedReader.readLine()) != null)
-		       {	   
-		           result += line;
-		       }
+	    	   if(getOption().equals(Constants.GSTATE_OPT)){
+	    		
+	    		   StringBuilder responseStrBuilder = new StringBuilder();
+	    		   while((line = bufferedReader.readLine()) != null){
+	    			   result += line;
+	    			   responseStrBuilder.append(line);
+	    		   }
+	    		   
+	    		   try{
+	    			   JSONObject jresult = new JSONObject(responseStrBuilder.toString());
+	    			   //Log.d("GGGjresult",""+jresult.getJSONArray("kids").getJSONObject(0).getInt("age"));
+	    			   //Log.d("jresult",""+jresult.getJSONArray("kids").getJSONObject(0).getString("name"));
+	    			   onAsyncResult.onStateResult(true, jresult);
+	    			   //DatabaseHandler db = new DatabaseHandler(getContext());
+	    			   //http://www.androidhive.info/2011/11/android-sqlite-database-tutorial/
+	    			   //http://myandroidsolutions.blogspot.com.es/2013/08/android-listview-with-searchview.html
+	    			   
+	    		   }catch(Exception e) {
+	    			   Log.d("JSON InputStream", e.getLocalizedMessage());
+	    		   }
+	    		   
+	    	   }else{
+	    	   
+		           while((line = bufferedReader.readLine()) != null)
+		           {	   
+		             result += line;
+		           }
+	    	   }
 	    	   
 	       }
 	       inputStream.close();

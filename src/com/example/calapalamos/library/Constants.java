@@ -18,4 +18,6 @@ public class Constants{
 	public final static String url = "http://lafosca-beach.herokuapp.com/api/v1";
 	public final static String ERROR_LOGIN = "HTTP Basic: Access denied.";
 	
+	
+	
 }

@@ -1,5 +1,6 @@
 package com.example.calapalamos;
 
+
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,5 +13,6 @@ public class Tab1State extends Fragment {
             ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.activity_tab1_state, container, false);
     }
+    
 
 }
