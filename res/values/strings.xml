@@ -20,6 +20,11 @@
     <string name="title_activity_tab2_opt">Tab2Opt</string>
     <string name="tab_1">State</string>
     <string name="tab_2">Options</string>
+    <string name="state_text">Estado:</string>
+    <string name="flag_text">Bandera:</string>
+    <string name="happy_text">Felicidad:</string>
+    <string name="dirty_text">Suciedad:</string>  
+    <string name="kids_text">Listado de Niños</string>  
     <string name="title_activity_mi_tab_listener">MiTabListener</string>
-
+    
 </resources>

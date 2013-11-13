@@ -62,6 +62,11 @@ public class OptionsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_options);
 
+
+		
+		Bundle data=new Bundle();
+		data.putString("state", getIntent().getStringExtra("state"));
+
 		//Obtenemos una referencia a la actionbar
 	    ActionBar abar = getActionBar();
 	 
@@ -75,7 +80,10 @@ public class OptionsActivity extends Activity {
 	    //Creamos los fragments de cada pesta–a
 	    Fragment tab1frag = new Tab1State();
 	    Fragment tab2frag = new Tab2Opt();
-	 
+	    
+	    //pasamos los datos al tab de las opciones
+	    tab1frag.setArguments(data);
+	    
 	    //Asociamos los listener a las pesta–as
 	    tab1.setTabListener(new MiTabListener(tab1frag));
 	    tab2.setTabListener(new MiTabListener(tab2frag));
@@ -84,54 +92,8 @@ public class OptionsActivity extends Activity {
 	    abar.addTab(tab1);
 	    abar.addTab(tab2);
 	    
-	    //recogemos los datos pasados desde LaFoscaMain
-	    try {
-			JSONObject obj = new JSONObject(getIntent().getStringExtra("state"));
-			Log.d("onStateResult",""+obj.getJSONArray("kids"));
-			List<JSONObject> ja = sortKidsObjects(obj.getJSONArray("kids"));
-			Log.d("SortJson",ja.toString());
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			Log.d("OptionsActivity",e.toString());
-		}
+
 	}
 	
-	/**
-	 * 
-	 * @param array
-	 * @return
-	 */
-	public static List<JSONObject> sortKidsObjects(JSONArray array) {
-	    List<JSONObject> jsons = new ArrayList<JSONObject>();
-	    for (int i = 0; i < array.length(); i++) {
-	        try {
-				jsons.add(array.getJSONObject(i));
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	    }
-	    Collections.sort(jsons, new Comparator<JSONObject>() {
-	        @Override
-	        public int compare(JSONObject lhs, JSONObject rhs) {
-	            Integer lid = 0;
-	            Integer rid = 0;
-				try {
-					lid = lhs.getInt("age");
-					rid = rhs.getInt("age");
-					Log.d("lhs",""+lid);
-					Log.d("rhs",""+rid);
-				    
-					// Here you could parse string id to integer and then compare.
-					Log.d("CompareTo",""+rid.compareTo(lid));
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-	            
-	            return rid.compareTo(lid);
-	        }
-	    });
-	    return jsons;
-	}
+
 }

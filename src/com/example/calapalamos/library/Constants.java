@@ -17,7 +17,7 @@ public class Constants{
 	public final static String SUFIX_GET_STATE = "/state";
 	public final static String url = "http://lafosca-beach.herokuapp.com/api/v1";
 	public final static String ERROR_LOGIN = "HTTP Basic: Access denied.";
-	
+	public final static String STATE_OPT = "POST";
 	
 	
 }
