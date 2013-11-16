@@ -62,7 +62,6 @@ public class Tab1State extends Fragment {
 				tDirty.setEnabled(false);
 				tHappy.setEnabled(false);
 				bKids.setEnabled(false);
-				//eFlag.setActivated(false); //.isActivated()
 				Log.d("CLoSED","CLOSED");
 				
 			}else{

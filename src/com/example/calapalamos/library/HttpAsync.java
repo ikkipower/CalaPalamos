@@ -98,7 +98,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	
 	 @Override
      protected void onPostExecute(String res) {
-		 Toast.makeText(getContext(), "Data! sended"+res, Toast.LENGTH_LONG).show();
+		 Toast.makeText(getContext(), "Data! sended "+res, Toast.LENGTH_LONG).show();
 		 Log.d("resultado postExecute",res);
 	 }
 	 
@@ -136,21 +136,22 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 
 		        // 8. Execute POST request to the given URL
 		        HttpResponse httpResponse = client.execute(httpPost);
-
+		        StatusLine content = httpResponse.getStatusLine();
+		        Log.d("REG content",content.toString());
 		        // 9. receive response as inputStream
 		        inputStream = httpResponse.getEntity().getContent();
 
 		        // 10. convert inputstream to string
-		        if(inputStream != null)
-		        	{
-		        		tmp = manageInputStream(inputStream);
-		        	    Log.d("RESULTADO "+getOption(),tmp);
-		            }else
-		        		tmp = "Did not work!";
+		        if(content.toString().equals(Constants.REG_OK))
+		        {
+		        	tmp = content.toString();
+		        	Log.d("RESULTADO "+getOption(),tmp);
+		        }else
+		            tmp = "Did not work!";
 
-		        } catch (Exception e) {
+		    } catch (Exception e) {
 		            Log.d("InputStream", e.getLocalizedMessage());
-		        }        
+		    }        
 		        
 		    return tmp;
 		 }
@@ -237,7 +238,8 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	        httpGet.setHeader("Content-type", "application/json");
 	        // 8. Execute get request to the given URL
 	        HttpResponse httpResponse = client.execute(httpGet);
-
+	        StatusLine content = httpResponse.getStatusLine();
+	        Log.d("getFunc CONTENT",content.toString());
 	        // 9. receive response as inputStream
 	        inputStream = httpResponse.getEntity().getContent();
 	        
@@ -245,7 +247,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	        // 11. manage inputstream to string
 	        if(inputStream != null)
 	        {
-	                tmp = manageInputStream(inputStream);
+	                tmp = manageInputStream(inputStream,content);
 
 	        }else
 	        		tmp = "Did not work!";
@@ -260,7 +262,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	    }
 	   
 	    
-	    private String manageInputStream(InputStream inputStream) throws IOException{
+	    private String manageInputStream(InputStream inputStream, StatusLine content) throws IOException{
 	       BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
 	       String line = "";
 	       String result = "";
@@ -268,7 +270,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 
 	       if(getOption().equals(Constants.LOG_IN_OPT)){
 		       StringBuilder responseStrBuilder = new StringBuilder();
-	    	   if(!result.equals(Constants.ERROR_LOGIN)){
+	    	   if(!content.equals(Constants.LOG_IN_FAILED)){
 	    		   while((line = bufferedReader.readLine()) != null){
 	    			   result += line;
 	    			   responseStrBuilder.append(line);
