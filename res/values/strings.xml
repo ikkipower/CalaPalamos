@@ -26,5 +26,6 @@
     <string name="dirty_text">Suciedad:</string>  
     <string name="kids_text">Listado de Niños</string>  
     <string name="title_activity_mi_tab_listener">MiTabListener</string>
+    <string name="change_state">Abrir/Cerrar Playa</string>
     
 </resources>

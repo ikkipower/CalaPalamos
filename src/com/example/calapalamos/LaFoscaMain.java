@@ -3,7 +3,6 @@ package com.example.calapalamos;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.calapalamos.library.Constants;
 import com.example.calapalamos.library.HttpAsync;
 import com.example.calapalamos.library.HttpAsync.OnAsyncResult;
 import com.example.calapalamos.library.User;
@@ -59,7 +58,6 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 			Toast.makeText(this, "Resultado no oj", Toast.LENGTH_SHORT).show();
 		}
 		
-		
 		// add click listener to Button "POST"
         btnLogin.setOnClickListener(this);
 	}
@@ -80,10 +78,12 @@ public class LaFoscaMain extends Activity implements OnClickListener {
                 	jUser.put("username",user.getName());
                 	jUser.put("password",passwdLogin.getText().toString());
     		        jReg.put("user", jUser);
+    		        
     		        HttpAsync asyncTask = new HttpAsync(LaFoscaMain.this,Constants.LOG_IN_OPT);  
-                      asyncTask.setOnResultListener(asynResult);  
-                      asyncTask.execute(jReg);
-                      //Log.e("Asynctask bafter","Jreg");
+                    asyncTask.setOnResultListener(asynResult);  
+                    asyncTask.execute(jReg);
+                    
+                    //Log.e("Asynctask bafter","Jreg");
                       //Toast.makeText(this, "Resultado ", Toast.LENGTH_SHORT).show();
     		        //new HttpAsyncGet(LaFoscaMain.this,Constants.LOG_IN_OPT).execute(jReg);
                 }  catch (JSONException e) {
@@ -114,8 +114,7 @@ public class LaFoscaMain extends Activity implements OnClickListener {
         
         if (resultCode == RESULT_CANCELED) {
             
-            Toast.makeText(this, "Resultado cancelado", Toast.LENGTH_SHORT)
-                    .show();
+            Toast.makeText(this, "Resultado cancelado", Toast.LENGTH_SHORT).show();
         } else {
             
             JSONObject jReg = new JSONObject();
@@ -184,14 +183,6 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 							   e.printStackTrace();
 			            }
 						
-						
-						
-						
-	                      
-	                    
-						
-						/*httpput.setHeader("Authorization", "Token token="
-                                + authenticationToken);*/
 					}
 				}
 			});
@@ -209,6 +200,7 @@ public class LaFoscaMain extends Activity implements OnClickListener {
                        Intent intent = new Intent(LaFoscaMain.this, OptionsActivity.class);
 					   intent.putExtra("username", user.getName());
 					   intent.putExtra("AuthToken", user.getAuthToken());
+					   Log.d("INTENT",j.toString());
 					   intent.putExtra("state", j.toString());
 					   startActivity(intent);
 		           }catch(Exception e) {

@@ -6,14 +6,20 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.example.calapalamos.Constants;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -35,9 +41,6 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
           this.onAsyncResult = onAsyncResult;  
        }  
     }
-    
-    
- 
     
 	public HttpAsync(Context cont, String opt) {
 		// TODO Auto-generated constructor stub
@@ -80,10 +83,11 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		if(getOption().equals(Constants.REG_OPT)){
 			result = regFunct(j[0]);
 	    }else if(getOption().equals(Constants.LOG_IN_OPT)){
-        	result = logInFunct(j[0]);
+        	result = getFunct(j[0]); //LOG_IN_OPT
         }else if(getOption().equals(Constants.GSTATE_OPT)){
-        	Log.d("gStateFunct","before ");
-        	result = gStateFunct(j[0]);
+        	result = getFunct(j[0]); //GSTATE_OPT
+        }else if(getOption().equals(Constants.CHANGE_STATE_OPT)){
+        	result = putFunct(j[0]); //CHANGE_STATE
         }
 		pDialog.dismiss();
         return result;
@@ -151,43 +155,63 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		    return tmp;
 		 }
 
-	    public String gStateFunct(JSONObject j){
-	    	String tmp = "";
-	    	InputStream inputStream = null;
-	    	
-	        try {
-	        	HttpClient client = new DefaultHttpClient();
-	        	HttpGet httpGet = new HttpGet(Constants.url+Constants.SUFIX_GET_STATE);
-	        	Log.d("gstatefunct url",Constants.url+Constants.SUFIX_GET_STATE);
-		        httpGet.setHeader("Accept", "application/json");
-		        httpGet.setHeader("Content-type", "application/json");
-		        Log.d("gstatefunct token",j.toString());
-		        httpGet.setHeader("Authorization", "Token token="+ j.getJSONObject("user").getString("authenticationToken"));
-		        // 8. Execute get request to the given URL
-		        HttpResponse httpResponse = client.execute(httpGet);
-
-		        // 9. receive response as inputStream
-		        inputStream = httpResponse.getEntity().getContent();
-		        
-		         
-		        // 11. manage inputstream to string
-		        if(inputStream != null)
-		        {
-		                tmp = manageInputStream(inputStream);
-
-		        }else
-		        		tmp = "Did not work!";
-	        } catch (Exception e) {
-		             Log.d("gStateFunct InputStream", e.getLocalizedMessage());
-		    }   
+		 public String putFunct(JSONObject j){
+		    	String tmp = "";
 		    	
-		    return tmp;
+		        try {
+		        	Log.d("putFunct",""+j.getString("Auth"));
+		        	
+		        	
+		        	HttpClient client = new DefaultHttpClient();
+		        	HttpPut httpPut;
+		        	
+		        	if(j.getString("state").equals("open"))
+		        	{
+		        		httpPut = new HttpPut(Constants.url+Constants.SUFIX_PUT_CLOSE);
+		        	}else{
+		        		httpPut = new HttpPut(Constants.url+Constants.SUFIX_PUT_OPEN);
+		        	}
+		        	
+		        	httpPut.setHeader("Authorization", "Token token="+ j.getString("Auth"));
+			        httpPut.setHeader("Accept", "application/json");
+			        httpPut.setHeader("Content-type", "application/json");
+			        
+			        
+			        // 8. Execute get request to the given URL
+			        HttpResponse httpResponse = client.execute(httpPut);
+			        //Log.d("PUT MANAGE",httpResponse.getEntity());
+			        // 9. receive response as inputStream
+			        //inputStream = httpResponse.getEntity().getContent();
 
-		    
-    	
-	    }
-	    
-	    public String logInFunct(JSONObject j){
+			        StatusLine content = httpResponse.getStatusLine();
+		        	
+			        if(content.toString().equals(Constants.OPEN_CLOSE_OK)){
+
+				        if(j.getString("state").equals("open"))
+			        	{
+				        	onAsyncResult.onResult(true,"closed");
+			        	}else{
+			        		onAsyncResult.onResult(true,"open");
+			        	}
+			        	
+			        }else{
+
+				        onAsyncResult.onResult(false,content.toString());
+
+			        }
+			        
+			        
+			       
+		        } catch (Exception e) {
+			             Log.d("putFunct InputStream", e.getLocalizedMessage());
+			    }  
+			    	
+			    return tmp;	    
+	    	
+		    }		 
+		
+
+	    public String getFunct(JSONObject j){
 	    	
 	    	String tmp = "";
 	    	InputStream inputStream = null;
@@ -195,12 +219,20 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	        try {
 	        	
 	    	HttpClient client = new DefaultHttpClient();
-	    	HttpGet httpGet = new HttpGet(Constants.url+Constants.SUFIX_LOGIN);         
-	    	String authUser = j.getJSONObject("user").getString("username").toString();
-	        String authPass = j.getJSONObject("user").getString("password").toString();    
-	        UsernamePasswordCredentials credentials =  new UsernamePasswordCredentials(authUser, authPass);
-	        BasicScheme scheme = new BasicScheme();
-	        httpGet.addHeader(scheme.authenticate(credentials, httpGet));
+	    	HttpGet httpGet;
+	    	if(getOption().equals(Constants.GSTATE_OPT))
+	    	{
+	    		httpGet = new HttpGet(Constants.url+Constants.SUFIX_GET_STATE);
+	    		httpGet.setHeader("Authorization", "Token token="+ j.getJSONObject("user").getString("authenticationToken"));
+	    	}else{
+	    		httpGet = new HttpGet(Constants.url+Constants.SUFIX_LOGIN);
+	    		String authUser = j.getJSONObject("user").getString("username").toString();
+		        String authPass = j.getJSONObject("user").getString("password").toString();    
+		        UsernamePasswordCredentials credentials =  new UsernamePasswordCredentials(authUser, authPass);
+		        BasicScheme scheme = new BasicScheme();
+		        httpGet.addHeader(scheme.authenticate(credentials, httpGet));
+	    	}
+	    
 	        httpGet.setHeader("Accept", "application/json");
 	        httpGet.setHeader("Content-type", "application/json");
 	        // 8. Execute get request to the given URL
@@ -265,20 +297,20 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	    			   //Log.d("GGGjresult",""+jresult.getJSONArray("kids").getJSONObject(0).getInt("age"));
 	    			   //Log.d("jresult",""+jresult.getJSONArray("kids").getJSONObject(0).getString("name"));
 	    			   onAsyncResult.onStateResult(true, jresult);
-	    			   //DatabaseHandler db = new DatabaseHandler(getContext());
-	    			   //http://www.androidhive.info/2011/11/android-sqlite-database-tutorial/
-	    			   //http://myandroidsolutions.blogspot.com.es/2013/08/android-listview-with-searchview.html
 	    			   
 	    		   }catch(Exception e) {
 	    			   Log.d("JSON InputStream", e.getLocalizedMessage());
 	    		   }
 	    		   
 	    	   }else{
-	    	   
+	    	          
+	    		   Log.d("manage others",bufferedReader.readLine());
 		           while((line = bufferedReader.readLine()) != null)
 		           {	   
-		             result += line;
+		        	   
+		        	   result += line;
 		           }
+		           
 	    	   }
 	    	   
 	       }

@@ -32,8 +32,12 @@ public class OptionsActivity extends Activity {
 
 	private String AuthToken;
 	private String Name;
-	//private ListView optionsLV;
-	//private String[] options = new String[]{"Abrir/Cerrar la Playa","Cambiar Bandera","Lanzar Pelotas","Listado de Ni–os"};
+	private String mState;
+	private String mDirty;
+	private String mHappy;
+	private String mKids;
+	private String mFlag;
+	
 	
 	public void setAuthToken(String auth){
 		this.AuthToken = auth;
@@ -51,6 +55,46 @@ public class OptionsActivity extends Activity {
 		return Name;
 	}
 	
+	public void setState(String s){
+		this.mState = s;
+	}
+	
+	public String getState(){
+		return mState;
+	}	
+	
+	public void setHappy(String h){
+		this.mHappy = h;
+	}
+	
+	public String getHappy(){
+		return mHappy;
+	}
+	
+	public void setDirty(String d){
+		this.mDirty = d;
+	}
+	
+	public String getDirty(){
+		return mDirty;
+	}
+
+	public void setKids(String k){
+		this.mKids = k;
+	}
+	
+	public String getKids(){
+		return mKids;
+	}
+
+	public void setFlag(String f){
+		this.mFlag = f;
+	}
+	
+	public String getFlag(){
+		return mFlag;
+	}
+	
 	/**
 	 * 
 	 * 
@@ -62,10 +106,6 @@ public class OptionsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_options);
 
-
-		
-		Bundle data=new Bundle();
-		data.putString("state", getIntent().getStringExtra("state"));
 
 		//Obtenemos una referencia a la actionbar
 	    ActionBar abar = getActionBar();
@@ -81,9 +121,6 @@ public class OptionsActivity extends Activity {
 	    Fragment tab1frag = new Tab1State();
 	    Fragment tab2frag = new Tab2Opt();
 	    
-	    //pasamos los datos al tab de las opciones
-	    tab1frag.setArguments(data);
-	    
 	    //Asociamos los listener a las pesta–as
 	    tab1.setTabListener(new MiTabListener(tab1frag));
 	    tab2.setTabListener(new MiTabListener(tab2frag));
@@ -91,6 +128,28 @@ public class OptionsActivity extends Activity {
 	    //A–adimos las pesta–as a la action bar
 	    abar.addTab(tab1);
 	    abar.addTab(tab2);
+	    
+	    
+        setAuthToken(getIntent().getStringExtra("AuthToken"));
+        
+		try {
+			JSONObject jstate = new JSONObject(getIntent().getStringExtra("state"));
+			setState(jstate.get("state").toString());
+			if(getState().equals("open"))
+			{
+				setDirty(jstate.getString("dirtiness"));			
+				setHappy(jstate.getString("happiness"));
+		     	setKids(jstate.getString("kids"));
+			}
+
+			
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+
 	    
 
 	}

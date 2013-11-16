@@ -25,27 +25,28 @@ public final class R {
         public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
+        public static final int BKids=0x7f08000f;
         public static final int ETDirty=0x7f08000e;
         public static final int ETFlag=0x7f08000a;
         public static final int ETHappy=0x7f08000c;
         public static final int ETState=0x7f080008;
-        public static final int action_settings=0x7f080014;
+        public static final int TDirty=0x7f08000d;
+        public static final int TFlag=0x7f080009;
+        public static final int THappy=0x7f08000b;
+        public static final int action_settings=0x7f080015;
         public static final int btnCancel=0x7f080006;
-        public static final int btnLogin=0x7f080012;
+        public static final int btnLogin=0x7f080013;
         public static final int btnReg=0x7f080005;
-        public static final int button1=0x7f08000f;
+        public static final int btnState=0x7f080010;
         public static final int header=0x7f080002;
-        public static final int link_to_register=0x7f080013;
-        public static final int nameLogin=0x7f080010;
+        public static final int link_to_register=0x7f080014;
+        public static final int nameLogin=0x7f080011;
         public static final int nameReg=0x7f080003;
-        public static final int passwdLogin=0x7f080011;
+        public static final int passwdLogin=0x7f080012;
         public static final int passwdReg=0x7f080004;
         public static final int tab1=0x7f080000;
         public static final int tab2=0x7f080001;
         public static final int textView1=0x7f080007;
-        public static final int textView2=0x7f080009;
-        public static final int textView4=0x7f08000b;
-        public static final int textView5=0x7f08000d;
     }
     public static final class layout {
         public static final int activity_la_fosca_main=0x7f030000;
@@ -69,6 +70,7 @@ public final class R {
         public static final int action_=0x7f050001;
         public static final int action_settings=0x7f05000c;
         public static final int app_name=0x7f050000;
+        public static final int change_state=0x7f050019;
         public static final int dirty_text=0x7f050016;
         public static final int flag_text=0x7f050014;
         public static final int happy_text=0x7f050015;
