@@ -140,6 +140,7 @@ public class OptionsActivity extends Activity {
 				setDirty(jstate.getString("dirtiness"));			
 				setHappy(jstate.getString("happiness"));
 		     	setKids(jstate.getString("kids"));
+		     	setFlag(jstate.getString("flag"));
 			}
 
 			

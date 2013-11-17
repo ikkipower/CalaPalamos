@@ -46,16 +46,17 @@ public class Tab1State extends Fragment {
 		tDirty=(TextView)v.findViewById(R.id.TDirty);
 		tHappy=(TextView)v.findViewById(R.id.THappy);
 		bKids=(Button)v.findViewById(R.id.BKids);
-		
+		Log.d("TAB1","tab1");
 		  		
 	    //recogemos los datos pasados desde LaFoscaMain
 	    try {
-			
+	    	Log.d("TAB1","2");
 			activity = (OptionsActivity) getActivity();
 			State = activity.getState();
+			Log.d("TAB1","3");
 			eState.setText(State);		
 
-			
+			Log.d("TAB1","4");
 			if(State.equals("closed"))
 			{
 				tFlag.setEnabled(false);
@@ -73,9 +74,9 @@ public class Tab1State extends Fragment {
                 JSONArray ka= new JSONArray(activity.getKids());		
 				List<JSONObject> ja = sortKidsObjects(ka);
 				
-				if(activity.getHappy().equals("1"))
+				if(activity.getFlag().equals("1"))
 				    eFlag.setText("Yellow");
-				else if(activity.getHappy().equals("0"))
+				else if(activity.getFlag().equals("0"))
 					eFlag.setText("Green");
 				else
 					eFlag.setText("Red");

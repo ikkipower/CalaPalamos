@@ -70,7 +70,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
     protected void onPreExecute() {
         super.onPreExecute();
         pDialog = new ProgressDialog(getContext());
-        pDialog.setMessage("Sending User...");
+        pDialog.setMessage("Processing...");
         pDialog.show();
         
 	}
@@ -88,7 +88,11 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
         	result = getFunct(j[0]); //GSTATE_OPT
         }else if(getOption().equals(Constants.CHANGE_STATE_OPT)){
         	result = putFunct(j[0]); //CHANGE_STATE
+        }else if(getOption().equals(Constants.CHANGE_STATE_FLAG)){
+        	result = putFunct(j[0]); //CHANGE_FLAG
+        	Log.d("change flag",j[0].toString());
         }
+		
 		pDialog.dismiss();
         return result;
 	
@@ -166,12 +170,33 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		        	HttpClient client = new DefaultHttpClient();
 		        	HttpPut httpPut;
 		        	
-		        	if(j.getString("state").equals("open"))
+		        	if(getOption().equals(Constants.CHANGE_STATE_OPT))
 		        	{
-		        		httpPut = new HttpPut(Constants.url+Constants.SUFIX_PUT_CLOSE);
-		        	}else{
-		        		httpPut = new HttpPut(Constants.url+Constants.SUFIX_PUT_OPEN);
+		        		if(j.getString("state").equals("open"))
+		        	    {
+		             		httpPut = new HttpPut(Constants.url+Constants.SUFIX_PUT_CLOSE);
+		             	}else{
+		        	    	httpPut = new HttpPut(Constants.url+Constants.SUFIX_PUT_OPEN);
+		             	}
+		        	}else{ /*if(getOption().equals(Constants.CHANGE_STATE_FLAG)){
+		        		
+		        		// TODO temporalmente*/ 
+		        		httpPut = new HttpPut(Constants.url+Constants.SUFIX_PUT_FLAG);
+		        		String json = "";
+		 		        
+		 		        json = j.getString("flag_j");
+		 		        Log.d("json",j.getJSONObject("flag_j").getString("flag"));
+		 		        
+		 		        StringEntity se = new StringEntity(json);
+		 		        
+		 		        // 6. set httpPost Entity
+		 		        httpPut.setEntity(se);
+
+		        		
+		        		
 		        	}
+		        	
+		        	
 		        	
 		        	httpPut.setHeader("Authorization", "Token token="+ j.getString("Auth"));
 			        httpPut.setHeader("Accept", "application/json");
@@ -186,21 +211,35 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 
 			        StatusLine content = httpResponse.getStatusLine();
 		        	
-			        if(content.toString().equals(Constants.OPEN_CLOSE_OK)){
-
-				        if(j.getString("state").equals("open"))
-			        	{
-				        	onAsyncResult.onResult(true,"closed");
-			        	}else{
-			        		onAsyncResult.onResult(true,"open");
-			        	}
+			        if(getOption().equals(Constants.CHANGE_STATE_OPT))
+		        	{
 			        	
-			        }else{
+			        	if(content.toString().equals(Constants.OPEN_CLOSE_OK)){
 
-				        onAsyncResult.onResult(false,content.toString());
+					        if(j.getString("state").equals("open"))
+				        	{
+					        	onAsyncResult.onResult(true,"closed");
+				        	}else{
+				        		onAsyncResult.onResult(true,"open");
+				        	}
+				        	
+				        }else{
 
-			        }
-			        
+					        onAsyncResult.onResult(false,content.toString());
+
+				        }
+		        	
+		        		
+		        	}else
+		        	{ 
+		        		
+		        		if(content.toString().equals(Constants.FLAG_OK)){
+		        			onAsyncResult.onResult(true,j.getJSONObject("flag_j").getString("flag"));
+		        		}else{
+		        			onAsyncResult.onResult(false,"flag_failed");
+		        		}
+		        	}
+		        		    
 			        
 			       
 		        } catch (Exception e) {

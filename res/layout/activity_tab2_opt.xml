@@ -14,15 +14,60 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cstate_text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+        
         <Button
             android:id="@+id/btnState"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="center|right"
             android:text="@string/change_state" />
-        
-    </LinearLayout>
 
-    
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cflag_text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <RadioGroup 
+            android:id="@+id/radioFlagGroup"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        
+            <RadioButton
+                android:id="@+id/cFlagGreen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="@string/check_green" />
+
+            <RadioButton
+                android:id="@+id/cFlagYellow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="@string/check_yellow" />
+        
+            <RadioButton
+                android:id="@+id/cFlagRed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="@string/check_red" />
+        </RadioGroup> 
+        <Button
+            android:id="@+id/btnFlag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="@string/change_state" />
+    </LinearLayout>
 
 </LinearLayout>
