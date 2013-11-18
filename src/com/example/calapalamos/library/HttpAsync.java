@@ -88,6 +88,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
         	result = getFunct(j[0]); //GSTATE_OPT
         }else if(getOption().equals(Constants.CHANGE_STATE_OPT)){
         	result = putFunct(j[0]); //CHANGE_STATE
+        	Log.d("change state ",j[0].toString());
         }else if(getOption().equals(Constants.CHANGE_STATE_FLAG)){
         	result = putFunct(j[0]); //CHANGE_FLAG
         	Log.d("change flag",j[0].toString());
@@ -104,6 +105,47 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
      protected void onPostExecute(String res) {
 		 Toast.makeText(getContext(), "Data! sended "+res, Toast.LENGTH_LONG).show();
 		 Log.d("resultado postExecute",res);
+		 
+		 if(getOption().equals(Constants.CHANGE_STATE_OPT))
+     	 {
+	        	
+	        	if(res.equals(Constants.OPEN_OK)){
+
+	        		onAsyncResult.onResult(true,"open");
+	        	}else{ 
+	        		if(res.equals(Constants.CLOSE_OK)){
+	        			onAsyncResult.onResult(true,"closed");
+	        		}
+	        	    else{
+
+			        onAsyncResult.onResult(false,res);
+
+		            }
+		        }
+
+     	 }else{ 
+     		if(getOption().equals(Constants.CHANGE_STATE_FLAG)){
+     			Log.d("postExecute FLAG",res);
+        		if(res.equals("0") || res.equals("1") || res.equals("2")){
+        			onAsyncResult.onResult(true,res);
+        	 		//tmp = j.getJSONObject("flag_j").getString("flag");
+        			//onAsyncResult.onResult(true,j.getJSONObject("flag_j").getString("flag"));
+        		}else{
+        			onAsyncResult.onResult(false,"flag_failed");
+        		}
+     		}
+     	 }
+		 
+		 
+		 
+		 
+		 /*if(getOption().equals(Constants.CHANGE_STATE_FLAG)){
+			 onAsyncResult.onResult(true,res);
+		 }
+		 //TODO meter aqu’ todas las llamadas a las interfaces
+		 if(getOption().equals(Constants.CHANGE_STATE_OPT)){
+			 onAsyncResult.onResult(true,res);
+		 }*/
 	 }
 	 
 	 /*
@@ -210,35 +252,27 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 			        //inputStream = httpResponse.getEntity().getContent();
 
 			        StatusLine content = httpResponse.getStatusLine();
+		        	Log.d("CONTENT PUT",content.toString());
 		        	
-			        if(getOption().equals(Constants.CHANGE_STATE_OPT))
+		        	if(getOption().equals(Constants.CHANGE_STATE_OPT))
 		        	{
-			        	
-			        	if(content.toString().equals(Constants.OPEN_CLOSE_OK)){
-
-					        if(j.getString("state").equals("open"))
-				        	{
-					        	onAsyncResult.onResult(true,"closed");
-				        	}else{
-				        		onAsyncResult.onResult(true,"open");
-				        	}
-				        	
-				        }else{
-
-					        onAsyncResult.onResult(false,content.toString());
-
-				        }
-		        	
-		        		
-		        	}else
-		        	{ 
-		        		
+		        		if(j.getString("state").equals("open"))
+		        	    {
+		        			tmp = content.toString()+" closed";
+		             	}else{
+		             		tmp = content.toString()+" open";
+		             	}
+		        	}else{
 		        		if(content.toString().equals(Constants.FLAG_OK)){
-		        			onAsyncResult.onResult(true,j.getJSONObject("flag_j").getString("flag"));
-		        		}else{
-		        			onAsyncResult.onResult(false,"flag_failed");
-		        		}
+                            tmp = j.getJSONObject("flag_j").getString("flag");
+                        }else{
+                            tmp = content.toString();
+                        }
+		        		
 		        	}
+		        	
+		        	 
+		        	
 		        		    
 			        
 			       
@@ -335,8 +369,6 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	    		   
 	    		   try{
 	    			   JSONObject jresult = new JSONObject(responseStrBuilder.toString());
-	    			   //Log.d("GGGjresult",""+jresult.getJSONArray("kids").getJSONObject(0).getInt("age"));
-	    			   //Log.d("jresult",""+jresult.getJSONArray("kids").getJSONObject(0).getString("name"));
 	    			   onAsyncResult.onStateResult(true, jresult);
 	    			   
 	    		   }catch(Exception e) {

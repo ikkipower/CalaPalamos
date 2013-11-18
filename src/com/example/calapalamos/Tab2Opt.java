@@ -22,12 +22,13 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TabHost.OnTabChangeListener;
 
-public class Tab2Opt extends Fragment { //implements OnClickListener{
+public class Tab2Opt extends Fragment{ //implements OnClickListener{
     
 	RadioGroup radioFlagGroup;
 	RadioButton Green_check, Yellow_check, Red_check;
-	Button btnState, btnFlag;
+	Button btnState, btnFlag, btnLanzar, btnLimpiar;
 	String Auth;
 	Context Cont;
 	OptionsActivity activity;
@@ -48,7 +49,7 @@ public class Tab2Opt extends Fragment { //implements OnClickListener{
     	
     	
     	
-    	setFlagRadio(v);
+    	setEnableDisable(v);
     	
     	btnState.setOnClickListener(new View.OnClickListener(){
     		      @Override
@@ -71,6 +72,7 @@ public class Tab2Opt extends Fragment { //implements OnClickListener{
         return v;
     }
 
+	
 	public void sendChange(View v,int p){
 		
 		JSONObject jSend = new JSONObject();
@@ -128,16 +130,38 @@ public class Tab2Opt extends Fragment { //implements OnClickListener{
                         if(message.equals("open")){
                         	activity.setState(message);
     						Log.d("Estado Cambiado",message);
+                            btnLimpiar.setEnabled(false);
+    						btnLanzar.setEnabled(true);
+    						btnFlag.setEnabled(true);
+    						Green_check.setEnabled(true);
+    						Yellow_check.setEnabled(true);
+    						Red_check.setEnabled(true);
+    						if(activity.getFlag().equals("0"))
+    		            	 {
+    		            		 Green_check.setChecked(true); 
+    		            	 }else{
+    		            		 if(activity.getFlag().equals("1"))
+    		            		 {
+    		            			 Yellow_check.setChecked(true);
+    		            		 }else{
+    		            			 Red_check.setChecked(true);
+    		            		 }
+    		            	 }
                         }else if(message.equals("closed")){
                         	activity.setState(message);
-    						Log.d("Estado Cambiado",message);
+    						Log.d("Estado Cambiado clo",message);
+    						Green_check.setEnabled(false);
+    						Yellow_check.setEnabled(false);
+    						Red_check.setEnabled(false);
+    						btnLimpiar.setEnabled(true);
+    						btnLanzar.setEnabled(false);
+    						
+    						btnFlag.setEnabled(false);
                         }else{
                         	activity.setFlag(message);
     						Log.d("Flag Cambiado",message);
                         }
-						//activity.setState(message);
-						//Log.d("Estado Cambiado",message);
-					    //TODO
+
 				}else{
 					Log.d("NO Cambiado",message);
 				}
@@ -152,14 +176,17 @@ public class Tab2Opt extends Fragment { //implements OnClickListener{
 			
 	   };
 	   
-	   public void setFlagRadio(View v){
+	   public void setEnableDisable(View v){
 			Green_check = (RadioButton)v.findViewById(R.id.cFlagGreen);
 			Yellow_check = (RadioButton)v.findViewById(R.id.cFlagYellow);
 			Red_check = (RadioButton)v.findViewById(R.id.cFlagRed);
 			btnFlag = (Button)v.findViewById(R.id.btnFlag);
+			btnLimpiar = (Button)v.findViewById(R.id.btnClean);
+			btnLanzar = (Button)v.findViewById(R.id.btnNivea);
 			activity = (OptionsActivity) getActivity();
 			
 			if(activity.getState().equals("open")){
+				btnLimpiar.setEnabled(false);
 				if(activity.getFlag().equals("1"))
 	     		    Yellow_check.setChecked(true);
 		     	else if(activity.getFlag().equals("0"))
@@ -167,6 +194,9 @@ public class Tab2Opt extends Fragment { //implements OnClickListener{
 			    else
 				    Red_check.setChecked(true);
 			}else{
+				
+				btnLanzar.setEnabled(false);
+				btnLimpiar.setEnabled(true);
 				Green_check.setEnabled(false);
 				Yellow_check.setEnabled(false);
 				Red_check.setEnabled(false);
@@ -175,4 +205,5 @@ public class Tab2Opt extends Fragment { //implements OnClickListener{
 						
 			
 	   }
+	   
 }

@@ -24,6 +24,9 @@
     <string name="cstate_text">Cambiar Estado</string>
     <string name="flag_text">Bandera:</string>
     <string name="cflag_text">Cambiar Bandera</string>
+    <string name="nivea_text">Lanzar Balones:</string>
+    <string name="throw_text">Lanzar</string> 
+    <string name="clean_text">Limpiar</string>
     <string name="happy_text">Felicidad:</string>
     <string name="dirty_text">Suciedad:</string>  
     <string name="kids_text">Listado de Niños</string>  
