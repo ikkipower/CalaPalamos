@@ -70,8 +70,8 @@ public final class R {
     public static final class menu {
         public static final int change_state=0x7f070000;
         public static final int la_fosca_main=0x7f070001;
-        public static final int mi_tab_listener=0x7f070002;
-        public static final int register=0x7f070003;
+        public static final int menu=0x7f070002;
+        public static final int mi_tab_listener=0x7f070003;
         public static final int state=0x7f070004;
         public static final int tab1_state=0x7f070005;
         public static final int tab2_opt=0x7f070006;

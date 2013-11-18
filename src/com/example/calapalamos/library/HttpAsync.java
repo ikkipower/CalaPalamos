@@ -81,7 +81,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		String result = "";
 		
 		if(getOption().equals(Constants.REG_OPT)){
-			result = regFunct(j[0]);
+			result = postFunct(j[0]);
 	    }else if(getOption().equals(Constants.LOG_IN_OPT)){
         	result = getFunct(j[0]); //LOG_IN_OPT
         }else if(getOption().equals(Constants.GSTATE_OPT)){
@@ -92,6 +92,11 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
         }else if(getOption().equals(Constants.CHANGE_STATE_FLAG)){
         	result = putFunct(j[0]); //CHANGE_FLAG
         	Log.d("change flag",j[0].toString());
+        }else if(getOption().equals(Constants.THROW_OPT)){
+        	result = postFunct(j[0]); //CHANGE_FLAG
+        	Log.d("throw balls",getOption().toString());
+        }else if(getOption().equals(Constants.CLEAN_OPT)){
+        	result = postFunct(j[0]);
         }
 		
 		pDialog.dismiss();
@@ -136,16 +141,6 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
      		}
      	 }
 		 
-		 
-		 
-		 
-		 /*if(getOption().equals(Constants.CHANGE_STATE_FLAG)){
-			 onAsyncResult.onResult(true,res);
-		 }
-		 //TODO meter aqu’ todas las llamadas a las interfaces
-		 if(getOption().equals(Constants.CHANGE_STATE_OPT)){
-			 onAsyncResult.onResult(true,res);
-		 }*/
 	 }
 	 
 	 /*
@@ -159,22 +154,36 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	        
 
 		
-		 public String regFunct(JSONObject j){
+		 public String postFunct(JSONObject j){
 			 InputStream inputStream = null;
 	 		 String tmp = "";
 		     try {
-		        HttpClient client = new DefaultHttpClient();
-
-		        HttpPost httpPost = new HttpPost(Constants.url+Constants.SUFIX_REGISTER);
-
-		        String json = "";
 		        
-		        json = j.toString();
-		        
-		        StringEntity se = new StringEntity(json);
-		        
-		        // 6. set httpPost Entity
-		        httpPost.setEntity(se);
+		    	HttpClient client = new DefaultHttpClient();
+		    	HttpPost httpPost;
+		    	
+		    	if(getOption().toString().equals(Constants.REG_OPT))
+		    	{
+		    		httpPost = new HttpPost(Constants.url+Constants.SUFIX_REGISTER);
+		    		String json = "";
+			        
+			        json = j.toString();
+			        
+			        StringEntity se = new StringEntity(json);
+			        // 6. set httpPost Entity
+			        httpPost.setEntity(se);
+			        
+		    	}else{
+		    		
+		    		if(getOption().toString().equals(Constants.CLEAN_OPT))
+		    		{
+		    			httpPost = new HttpPost(Constants.url+Constants.SUFIX_POST_CLEAN);
+		    		}else{
+		    			httpPost = new HttpPost(Constants.url+Constants.SUFIX_POST_BALLS);
+		    		}
+		    		
+		    		httpPost.setHeader("Authorization", "Token token="+ j.getString("Auth"));
+		    	}
 
 		        // 7. Set some headers to inform server about the type of the content   
 		        httpPost.setHeader("Accept", "application/json");
@@ -188,12 +197,28 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		        inputStream = httpResponse.getEntity().getContent();
 
 		        // 10. convert inputstream to string
-		        if(content.toString().equals(Constants.REG_OK))
-		        {
-		        	tmp = content.toString();
-		        	Log.d("RESULTADO "+getOption(),tmp);
-		        }else
-		            tmp = "Did not work!";
+		        if(getOption().toString().equals(Constants.REG_OPT)){
+		        
+		        	if(content.toString().equals(Constants.REG_OK))
+		        	{
+		        		tmp = content.toString();
+		        		Log.d("RESULTADO "+getOption(),tmp);
+		        	}else{
+		        		tmp = "Did not work!";
+		        	}
+		        	
+		        }else{
+		        	
+		        	if(content.toString().equals(Constants.THROW_CLEAN_OK))
+		        	{
+		        		tmp = content.toString();
+		        		Log.d("RESULTADO THROW "+getOption(),tmp);
+		        	}else{
+		        		tmp = "Did not work!";
+		        	}		        	
+		        }
+
+		            
 
 		    } catch (Exception e) {
 		            Log.d("InputStream", e.getLocalizedMessage());

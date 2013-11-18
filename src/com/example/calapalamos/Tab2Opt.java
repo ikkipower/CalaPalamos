@@ -7,22 +7,15 @@ import com.example.calapalamos.library.HttpAsync;
 import com.example.calapalamos.library.HttpAsync.OnAsyncResult;
 
 import android.os.Bundle;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TabHost.OnTabChangeListener;
 
 public class Tab2Opt extends Fragment{ //implements OnClickListener{
     
@@ -47,8 +40,6 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
     	
     	btnState=(Button)v.findViewById(R.id.btnState);
     	
-    	
-    	
     	setEnableDisable(v);
     	
     	btnState.setOnClickListener(new View.OnClickListener(){
@@ -67,8 +58,24 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
 		
 	    });
     	
-    	
+    	btnLanzar.setOnClickListener(new View.OnClickListener(){
+		      @Override
+		      public void onClick(View v) {
+		        Log.d("LANZAR","LANZAR");
+		        sendChange(v,2);
+		      };	
+		
+	    });
 
+    	btnLimpiar.setOnClickListener(new View.OnClickListener(){
+		      @Override
+		      public void onClick(View v) {
+		        Log.d("LANZAR","LANZAR");
+		        sendChange(v,3);
+		      };	
+		
+	    });
+    	
         return v;
     }
 
@@ -87,24 +94,36 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
                  asyncTask = new HttpAsync(getActivity(),Constants.CHANGE_STATE_OPT);
              }
              else{
-            	 JSONObject jFlag = new JSONObject();
-            	 if(Green_check.isChecked()==true)
+            	 if(p == 1)
             	 {
-            		 jFlag.put("flag", "0"); 
-            	 }else{
-            		 if(Yellow_check.isChecked()==true)
+            		 JSONObject jFlag = new JSONObject();
+            		 if(Green_check.isChecked()==true)
             		 {
-            			 jFlag.put("flag", "1");
+            			 jFlag.put("flag", "0"); 
             		 }else{
-            			 jFlag.put("flag", "2");
+            			 if(Yellow_check.isChecked()==true)
+            			 {
+            				 jFlag.put("flag", "1");
+            			 }else{
+            				 jFlag.put("flag", "2");
+            			 }
             		 }
-            	 }
             	 
-    			 jSend.put("Auth",Auth);
-            	 //OptionsActivity activity = (OptionsActivity) getActivity();
-            	 jSend.put("flag_j", jFlag); //coger el estado 
-            	 Log.d("JSEN",jSend.toString());
-            	 asyncTask = new HttpAsync(getActivity(),Constants.CHANGE_STATE_FLAG);
+            		 jSend.put("Auth",Auth);
+            		 //OptionsActivity activity = (OptionsActivity) getActivity();
+            		 jSend.put("flag_j", jFlag); //coger el estado 
+            		 Log.d("JSEN",jSend.toString());
+            		 asyncTask = new HttpAsync(getActivity(),Constants.CHANGE_STATE_FLAG);
+            	 }else{ //opt 2 y 3
+            		 jSend.put("Auth",Auth);
+            		 Log.d("JSEN",jSend.toString());
+            		 if(p == 2){
+            			 asyncTask = new HttpAsync(getActivity(),Constants.THROW_OPT); 
+            		 }else{
+            			 asyncTask = new HttpAsync(getActivity(),Constants.CLEAN_OPT);
+            		 }
+            		 
+            	 }
              }
         	 
              asyncTask.setOnResultListener(asynResult);  
@@ -186,6 +205,7 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
 			activity = (OptionsActivity) getActivity();
 			
 			if(activity.getState().equals("open")){
+				btnLanzar.setEnabled(true);
 				btnLimpiar.setEnabled(false);
 				if(activity.getFlag().equals("1"))
 	     		    Yellow_check.setChecked(true);
