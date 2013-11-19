@@ -34,6 +34,7 @@ public class Tab1State extends Fragment {
 	TextView tDirty;
 	Button bKids;
 	OptionsActivity activity;
+    
 	
 	@Override
     public View onCreateView(LayoutInflater inflater,
@@ -50,6 +51,7 @@ public class Tab1State extends Fragment {
 		tDirty=(TextView)v.findViewById(R.id.TDirty);
 		tHappy=(TextView)v.findViewById(R.id.THappy);
 		bKids=(Button)v.findViewById(R.id.BKids);
+		
 		Log.d("TAB1","tab1");
 		JSONObject jSend = new JSONObject();
 		JSONObject jUser = new JSONObject();
@@ -61,57 +63,26 @@ public class Tab1State extends Fragment {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-    	 //OptionsActivity activity = (OptionsActivity) getActivity();
-    	// jSend.put("state", activity.getState()); //coger el estado 
-       
-		Log.d("TAB1","1");
-        HttpAsync aStateTask = new HttpAsync(v.getContext(),Constants.GSTATE_OPT);  
-        aStateTask.setOnResultListener(asynResult);
-        aStateTask.execute(jSend);
+
+		activity = (OptionsActivity) getActivity();
+        if(activity.getInitCond()==false)
+        {
+        	HttpAsync aStateTask = new HttpAsync(v.getContext(),Constants.GSTATE_OPT);  
+        	aStateTask.setOnResultListener(asynResult);
+            aStateTask.execute(jSend);
+        }else{
+        	activity.setInitCond(false);
+        	
+        }
+        
 		
 	    //recogemos los datos pasados desde LaFoscaMain
-	    try {
-	    	Log.d("TAB1","2");
-			activity = (OptionsActivity) getActivity();
-			State = activity.getState();
-			Log.d("TAB1","3");
-			eState.setText(State);		
-
-			Log.d("TAB1","4");
-			if(State.equals("closed"))
-			{
-				tFlag.setEnabled(false);
-				tDirty.setEnabled(false);
-				tHappy.setEnabled(false);
-				bKids.setEnabled(false);
-				Log.d("CLoSED","CLOSED");
-				
-			}else{
-				tFlag.setEnabled(true);
-				tDirty.setEnabled(true);
-				tHappy.setEnabled(true);
-				bKids.setEnabled(true);				
-
-                JSONArray ka= new JSONArray(activity.getKids());		
-				List<JSONObject> ja = sortKidsObjects(ka);
-				
-				if(activity.getFlag().equals("1"))
-				    eFlag.setText("Yellow");
-				else if(activity.getFlag().equals("0"))
-					eFlag.setText("Green");
-				else
-					eFlag.setText("Red");
-				eDirty.setText(activity.getDirty());
-				eHappy.setText(activity.getHappy());
-				
-				
-				//Log.d("SortJson",ja.toString());
-			}	
-
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			Log.d("TabState",e.toString());
-		}
+	    
+       
+        Log.d("TAB1","2");
+		
+		
+		setElState();
     	
 		
     	
@@ -119,6 +90,50 @@ public class Tab1State extends Fragment {
         
     }
     
+	public void setElState(){
+		activity = (OptionsActivity) getActivity();
+		State = activity.getState();
+		Log.d("TAB1","3");
+		eState.setText(State);		
+
+		Log.d("TAB1","4");
+		if(State.equals("closed"))
+		{
+			tFlag.setEnabled(false);
+			tDirty.setEnabled(false);
+			tHappy.setEnabled(false);
+			eFlag.setEnabled(false);
+			eDirty.setEnabled(false);
+			eHappy.setEnabled(false);
+			bKids.setEnabled(false);
+			Log.d("CLoSED","CLOSED");
+			
+		}else{
+			tFlag.setEnabled(true);
+			tDirty.setEnabled(true);
+			tHappy.setEnabled(true);
+			eFlag.setEnabled(true);
+			eDirty.setEnabled(true);
+			eHappy.setEnabled(true);
+			bKids.setEnabled(true);				
+
+            /*JSONArray ka= new JSONArray(activity.getKids());		
+			List<JSONObject> ja = sortKidsObjects(ka);*/
+			
+			if(activity.getFlag().equals("1"))
+			    eFlag.setText("Yellow");
+			else if(activity.getFlag().equals("0"))
+				eFlag.setText("Green");
+			else
+				eFlag.setText("Red");
+			eDirty.setText(activity.getDirty());
+			eHappy.setText(activity.getHappy());
+			
+			
+			//Log.d("SortJson",ja.toString());
+		}
+	}
+	
 	/**
 	 * 
 	 * @param array
@@ -165,7 +180,23 @@ public class Tab1State extends Fragment {
 		@Override
 		public void onStateResult(boolean resultCode, JSONObject j) {
 			// TODO Auto-generated method stub
-			Log.d("onStateResult TAB1","");	
+			try {
+				activity = (OptionsActivity) getActivity();
+				
+				
+				activity.setState(j.getString("state").toString());
+				if(activity.getState().equals("open")){
+					activity.setFlag(j.getString("flag").toString());
+					activity.setDirty(j.getString("dirtiness").toString());
+					activity.setHappy(j.getString("happiness").toString());
+				}
+				
+				Log.d("onStateResult TAB1",j.getString("state").toString());
+                setElState();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
 		}
 		
    };

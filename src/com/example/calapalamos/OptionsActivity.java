@@ -31,7 +31,15 @@ public class OptionsActivity extends Activity {
 	private String mHappy;
 	private String mKids;
 	private String mFlag;
+    private boolean init_cond;
 	
+	public boolean getInitCond(){
+		return this.init_cond;
+	}
+	
+	public void setInitCond(boolean c){
+		this.init_cond = c;
+	}
 	
 	public void setAuthToken(String auth){
 		this.AuthToken = auth;
@@ -101,31 +109,32 @@ public class OptionsActivity extends Activity {
 		setContentView(R.layout.activity_options);
 
 		setAuthToken(getIntent().getStringExtra("AuthToken"));
-
+        setInitCond(getIntent().getBooleanExtra("init_cond", true));
 
 		
 		//Obtenemos una referencia a la actionbar
 	    ActionBar abar = getActionBar();
 	 
-	    //Establecemos el modo de navegaci—n por pesta–as
+	    //Establecemos el modo de navegacion por tabs
 	    abar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 	 
-	    //Creamos las pesta–as
+	    //Creamos las tabs
 	    ActionBar.Tab tab1 = abar.newTab().setText("State");
 	    ActionBar.Tab tab2 = abar.newTab().setText("Change");
-	 
-	    //Creamos los fragments de cada pesta–a
+	    ActionBar.Tab tab3 = abar.newTab().setText("Weather");
+	    //Creamos los fragments de cada tabs
 	    Fragment tab1frag = new Tab1State();
 	    Fragment tab2frag = new Tab2Opt();
+	    Fragment tab3frag = new Tab3Weather();
 	    
-	    //Asociamos los listener a las pesta–as
+	    //Asociamos los listener a los tabs
 	    tab1.setTabListener(new MiTabListener(tab1frag));
 	    tab2.setTabListener(new MiTabListener(tab2frag));
-	 
-	    //A–adimos las pesta–as a la action bar
+	    tab3.setTabListener(new MiTabListener(tab3frag));
+	    //AÃ±adimos las tabs a la action bar
 	    abar.addTab(tab1);
+	    abar.addTab(tab3);
 	    abar.addTab(tab2);
-	    
 	    
         
         
@@ -136,7 +145,7 @@ public class OptionsActivity extends Activity {
 			{
 				setDirty(jstate.getString("dirtiness"));			
 				setHappy(jstate.getString("happiness"));
-		     	setKids(jstate.getString("kids"));
+				setKids(jstate.getString("kids"));
 		     	setFlag(jstate.getString("flag"));
 			}
 

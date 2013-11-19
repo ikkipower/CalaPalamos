@@ -20,9 +20,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.calapalamos.Constants;
+import com.example.calapalamos.LaFoscaMain;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -33,8 +36,8 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	private Context context;
     private String option;
 	private String AuthToken;
-
-    /*interface data LaFoscaMain*/
+    
+    /*interface data*/
     OnAsyncResult onAsyncResult;  
     public void setOnResultListener(OnAsyncResult onAsyncResult) {  
        if (onAsyncResult != null) {  
@@ -56,7 +59,8 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	public void setOption(String opt){
 		this.option = opt;
 	}
-	
+
+
 	
 	public Context getContext(){
 		return this.context;
@@ -82,13 +86,42 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
     protected String doInBackground(JSONObject... j) {
         
 		String result = "";
+		String temp_res = "";
 		
 		if(getOption().equals(Constants.REG_OPT)){
 			result = postFunct(j[0]);
 	    }else if(getOption().equals(Constants.LOG_IN_OPT)){
-        	result = getFunct(j[0]); //LOG_IN_OPT
+        	//result = getFunct(j[0]);
+	    	temp_res= getFunct(j[0],1); //LOG_IN_OPT
+
+	    	if(!temp_res.equals(Constants.LOG_IN_FAILED)){
+	    		
+	    		JSONObject jReg = new JSONObject();
+	            JSONObject jUser = new JSONObject();
+	            
+	            try {
+	            	JSONObject jresult = new JSONObject(temp_res);
+	            	jUser.put("username",jresult.getString("username"));
+	            	this.AuthToken=jresult.getString(("authentication_token"));
+	            	jUser.put("authenticationToken",this.AuthToken);
+			        jReg.put("user", jUser);
+			        Log.d("TEMP_RES",jReg.toString());
+			        //setOption(Constants.GSTATE_OPT);
+			        result = getFunct(jReg,0);
+	            } catch (JSONException e) {
+					// TODO Auto-generated catch block
+	            	   
+	            	   Log.e("Error JSON Register",null);
+					   e.printStackTrace();
+	            }
+	    		  //result = temp_res;
+	    	}else{
+	    		Log.d("LOGIN","FAILED");
+	    		result = temp_res;
+
+	    	}
         }else if(getOption().equals(Constants.GSTATE_OPT)){
-        	result = getFunct(j[0]); //GSTATE_OPT
+        	result = getFunct(j[0],1); //GSTATE_OPT
         	Log.d("GSTATE state",getOption().toString());
         }else if(getOption().equals(Constants.CHANGE_STATE_OPT)){
         	result = putFunct(j[0]); //CHANGE_STATE
@@ -115,9 +148,12 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		 Toast.makeText(getContext(), "Data! sended "+res, Toast.LENGTH_LONG).show();
 		 Log.d("resultado postExecute",res);
 		 
-	        if(!getOption().equals(Constants.GSTATE_OPT)){
-	        	pDialog.dismiss();
+		 if(!getOption().equals(Constants.GSTATE_OPT)){
+			 pDialog.dismiss();
 	        }
+		 
+	     
+	       
 		 
 		 
 		 if(getOption().equals(Constants.CHANGE_STATE_OPT))
@@ -142,33 +178,49 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
      			Log.d("postExecute FLAG",res);
         		if(res.equals("0") || res.equals("1") || res.equals("2")){
         			onAsyncResult.onResult(true,res);
-        	 		//tmp = j.getJSONObject("flag_j").getString("flag");
-        			//onAsyncResult.onResult(true,j.getJSONObject("flag_j").getString("flag"));
+        	 	
         		}else{
         			onAsyncResult.onResult(false,"flag_failed");
         		}
      		}else{
      			if(getOption().equals(Constants.GSTATE_OPT)){
-     				JSONObject jresult;
-					try {
-						jresult = new JSONObject(res);
-						onAsyncResult.onStateResult(true, jresult);
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+
+					
+					JSONObject jresult;
+                    try {
+                            jresult = new JSONObject(res);
+                            onAsyncResult.onStateResult(true, jresult);
+                    } catch (JSONException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                    }
 	    			   
      			}else{
      				if(getOption().equals(Constants.LOG_IN_OPT)){
      		    	   if(!res.equals(Constants.LOG_IN_FAILED)){
-     		    		   try{
-     		    			   JSONObject jresult = new JSONObject(res);
-     		    			   onAsyncResult.onResult(true,jresult.getString("authentication_token"));
-     		    		   }catch(Exception e) {
-     		    			   Log.d("JSON InputStream", e.getLocalizedMessage());
-     		    		   }
+     	     				JSONObject jAuth;
+     	     				JSONObject jresult;
+     						try {
+     							jresult = new JSONObject(res);
+     							jAuth = new JSONObject();
+     							jAuth.put("AuthToken", this.AuthToken);
+     							jAuth.put("jresult", jresult);
+     							onAsyncResult.onStateResult(true, jAuth);
+     						} catch (JSONException e) {
+     							// TODO Auto-generated catch block
+     							e.printStackTrace();
+     						}
      		    	   }else{
-     		    		  onAsyncResult.onResult(false,"Failed");
+
+     		    		  AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+ 				    	  builder.setTitle("Login Failed!").setMessage("Try Again!").setCancelable(false)
+ 			                    .setNegativeButton("Close", new DialogInterface.OnClickListener() {
+ 			                    public void onClick(DialogInterface dialog, int id) {
+ 			                         dialog.cancel();
+ 			                    }
+ 			             });
+ 			             AlertDialog alert = builder.create();
+ 			             alert.show();
      		    		   //onAsyncResult.onResult(false,"Failed"); 
      		    	   }
      		       }
@@ -181,7 +233,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	 }
 	 
 	 /*
-	  * generamos una interface para el paso de datos hac’a LaFoscaMain
+	  * generamos una interface para el paso de datos
 	  */
 	   
 	    public interface OnAsyncResult {  
@@ -347,7 +399,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		    }		 
 		
 
-	    public String getFunct(JSONObject j){
+	    public String getFunct(JSONObject j, int opt){
 	    	
 	    	String tmp = "";
 	    	InputStream inputStream = null;
@@ -356,10 +408,12 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	        	
 	    	HttpClient client = new DefaultHttpClient();
 	    	HttpGet httpGet;
-	    	if(getOption().equals(Constants.GSTATE_OPT))
+	    	if((getOption().equals(Constants.GSTATE_OPT) && opt == 1)||
+	    	  (getOption().equals(Constants.LOG_IN_OPT) && opt == 0))
 	    	{
 	    		httpGet = new HttpGet(Constants.url+Constants.SUFIX_GET_STATE);
 	    		httpGet.setHeader("Authorization", "Token token="+ j.getJSONObject("user").getString("authenticationToken"));
+	    	    Log.d("AUTH"+opt,j.getJSONObject("user").getString("authenticationToken"));
 	    	}else{
 	    		httpGet = new HttpGet(Constants.url+Constants.SUFIX_LOGIN);
 	    		String authUser = j.getJSONObject("user").getString("username").toString();
@@ -398,7 +452,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	    		}
 	    		else
 	    		{
-	    			tmp = "Failed";
+	    			tmp = content.toString();
 	    		}
 	    	} 
 	       

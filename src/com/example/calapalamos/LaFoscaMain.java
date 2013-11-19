@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -59,7 +60,7 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 		else
 		{
 			AlertDialog.Builder builder = new AlertDialog.Builder(LaFoscaMain.this);
-	    	 builder.setTitle("SIN CONEXIîN").setMessage("Este APP necesita conexi—n a Internet").setCancelable(false)
+	    	 builder.setTitle("SIN CONEXION").setMessage("Este APP necesita conexion a Internet").setCancelable(false)
                    .setNegativeButton("Close", new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
@@ -165,44 +166,7 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 
 		@Override
 		public void onResult(final boolean resultCode, final String message) {
-			// TODO Auto-generated method stub
-			runOnUiThread(new Runnable() {
-				public void run() {
-					if(resultCode==false)
-					{
-						AlertDialog.Builder builder = new AlertDialog.Builder(LaFoscaMain.this);
-				    	 builder.setTitle("Login Failed!").setMessage("Try Again!").setCancelable(false)
-			                    .setNegativeButton("Close", new DialogInterface.OnClickListener() {
-			                    public void onClick(DialogInterface dialog, int id) {
-			                         dialog.cancel();
-			                    }
-			             });
-			             AlertDialog alert = builder.create();
-			             alert.show();
-					}else{	
-						Log.d("ASYNCRESULT",message+"->"+resultCode);
-						user.setAuthToken(message);
-						
-			            JSONObject jReg = new JSONObject();
-			            JSONObject jUser = new JSONObject();
-			            try {
-			            	jUser.put("username",user.getName());
-			            	jUser.put("authenticationToken",user.getAuthToken());
-					        jReg.put("user", jUser);
-					        HttpAsync aStateTask = new HttpAsync(LaFoscaMain.this,Constants.GSTATE_OPT);  
-		                    aStateTask.setOnResultListener(asynResult);
-					        aStateTask.execute(jReg);
-			            } catch (JSONException e) {
-							// TODO Auto-generated catch block
-			            	   
-			            	   Log.e("Error JSON Register",null);
-							   e.printStackTrace();
-			            }
-						
-					}
-				}
-			});
-			
+			// TODO Auto-generated method stub		
 		}
 		
 		@Override
@@ -212,12 +176,13 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 /*			runOnUiThread(new Runnable() {
 				public void run() { */
  		           try{
-                       
+ 		        	   user.setAuthToken(j.getString("AuthToken"));
                        Intent intent = new Intent(LaFoscaMain.this, OptionsActivity.class);
-					   intent.putExtra("username", user.getName());
+					   intent.putExtra("init_cond", true);
+                       intent.putExtra("username", user.getName());
 					   intent.putExtra("AuthToken", user.getAuthToken());
-					   Log.d("INTENT",j.toString());
-					   intent.putExtra("state", j.toString());
+					   //Log.d("INTENT",j.getJSONObject("jresult").toString());
+					   intent.putExtra("state", j.getJSONObject("jresult").toString());
 					   startActivity(intent);
 		           }catch(Exception e) {
 			          Log.d("JSON onStateResult", e.getLocalizedMessage());
@@ -225,23 +190,41 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 /*				}
 			});*/
 		
-			
-			
-			// TODO Auto-generated method stub
-			/*Intent intent = new Intent(LaFoscaMain.this, OptionsActivity.class);
-		intent.putExtra("username", user.getName());
-		intent.putExtra("AuthToken", user.getAuthToken());
-		startActivity(intent);*/	
+
 		}  
     };
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu, menu);
+		getMenuInflater().inflate(R.menu.la_fosca_main, menu);
 		return true;
 	}
-	
+
+	  @Override
+	  public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    case R.id.action_about:
+	    	
+           AlertDialog.Builder dialog = new AlertDialog.Builder(LaFoscaMain.this)  
+	    	.setTitle("About Us")  
+	    	.setMessage("Lafosca\n" +
+	    		     	"Doctor Trueta 113, Barcelona\n" +
+                        "email: xxx@lafosca.cat")  
+	    	.setIcon(R.drawable.ic_launcher)  
+	    	.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                  public void onClick(DialogInterface dialog, int id) {
+                	  dialog.cancel();
+                  }
+	    	});
+	    	AlertDialog aboutDialog = dialog.create();
+	    	aboutDialog.show();
+	      break;
+	    default:
+	      break;
+	    }
+	    return true;  
+	  }
 }
 
 
