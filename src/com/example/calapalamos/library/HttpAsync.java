@@ -69,9 +69,12 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	@Override
     protected void onPreExecute() {
         super.onPreExecute();
-        pDialog = new ProgressDialog(getContext());
-        pDialog.setMessage("Processing...");
-        pDialog.show();
+        if(!getOption().equals(Constants.GSTATE_OPT)){
+        	pDialog = new ProgressDialog(getContext());
+        	pDialog.setMessage("Processing...");
+        	pDialog.show();
+        }
+
         
 	}
 	
@@ -86,9 +89,10 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
         	result = getFunct(j[0]); //LOG_IN_OPT
         }else if(getOption().equals(Constants.GSTATE_OPT)){
         	result = getFunct(j[0]); //GSTATE_OPT
+        	Log.d("GSTATE state",getOption().toString());
         }else if(getOption().equals(Constants.CHANGE_STATE_OPT)){
         	result = putFunct(j[0]); //CHANGE_STATE
-        	Log.d("change state ",j[0].toString());
+            Log.d("change state ",j[0].toString());
         }else if(getOption().equals(Constants.CHANGE_STATE_FLAG)){
         	result = putFunct(j[0]); //CHANGE_FLAG
         	Log.d("change flag",j[0].toString());
@@ -99,7 +103,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
         	result = postFunct(j[0]);
         }
 		
-		pDialog.dismiss();
+		
         return result;
 	
 	}
@@ -110,6 +114,11 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
      protected void onPostExecute(String res) {
 		 Toast.makeText(getContext(), "Data! sended "+res, Toast.LENGTH_LONG).show();
 		 Log.d("resultado postExecute",res);
+		 
+	        if(!getOption().equals(Constants.GSTATE_OPT)){
+	        	pDialog.dismiss();
+	        }
+		 
 		 
 		 if(getOption().equals(Constants.CHANGE_STATE_OPT))
      	 {
@@ -138,7 +147,35 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
         		}else{
         			onAsyncResult.onResult(false,"flag_failed");
         		}
+     		}else{
+     			if(getOption().equals(Constants.GSTATE_OPT)){
+     				JSONObject jresult;
+					try {
+						jresult = new JSONObject(res);
+						onAsyncResult.onStateResult(true, jresult);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	    			   
+     			}else{
+     				if(getOption().equals(Constants.LOG_IN_OPT)){
+     		    	   if(!res.equals(Constants.LOG_IN_FAILED)){
+     		    		   try{
+     		    			   JSONObject jresult = new JSONObject(res);
+     		    			   onAsyncResult.onResult(true,jresult.getString("authentication_token"));
+     		    		   }catch(Exception e) {
+     		    			   Log.d("JSON InputStream", e.getLocalizedMessage());
+     		    		   }
+     		    	   }else{
+     		    		  onAsyncResult.onResult(false,"Failed");
+     		    		   //onAsyncResult.onResult(false,"Failed"); 
+     		    	   }
+     		       }
+     			}
+     			
      		}
+     		
      	 }
 		 
 	 }
@@ -315,7 +352,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	    	String tmp = "";
 	    	InputStream inputStream = null;
 	    	
-	        try {
+	     try {
 	        	
 	    	HttpClient client = new DefaultHttpClient();
 	    	HttpGet httpGet;
@@ -341,21 +378,35 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	        // 9. receive response as inputStream
 	        inputStream = httpResponse.getEntity().getContent();
 	        
-	         
-	        // 11. manage inputstream to string
-	        if(inputStream != null)
-	        {
-	                tmp = manageInputStream(inputStream,content);
-
-	        }else
-	        		tmp = "Did not work!";
+	        if(getOption().equals(Constants.GSTATE_OPT))
+	    	{
+	    		if(content.toString().equals(Constants.GSTATE_OK))
+	    		{
+	    			Log.d("getFunc GET STATE",content.toString());
+	    			tmp = manageInputStream(inputStream,content);
+	    		}
+	    		else
+	    		{
+	    			tmp = "Failed";
+	    		}
+	        	
+	    	}else{
+	    		if(!content.toString().equals(Constants.LOG_IN_FAILED))
+	    		{
+	    			Log.d("getFunc LOGIN",content.toString());
+	    			tmp = manageInputStream(inputStream,content);
+	    		}
+	    		else
+	    		{
+	    			tmp = "Failed";
+	    		}
+	    	} 
+	       
+	     } catch (Exception e) {
+	    	 Log.d("InputStream", e.getLocalizedMessage());
+	     }   
 	    	
-	            
-	        } catch (Exception e) {
-	             Log.d("InputStream", e.getLocalizedMessage());
-	        }   
-	    	
-	        return tmp;
+	     return tmp;
 
 	    }
 	   
@@ -367,37 +418,21 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	       
 
 	       if(getOption().equals(Constants.LOG_IN_OPT)){
-		       StringBuilder responseStrBuilder = new StringBuilder();
 	    	   if(!content.equals(Constants.LOG_IN_FAILED)){
 	    		   while((line = bufferedReader.readLine()) != null){
 	    			   result += line;
-	    			   responseStrBuilder.append(line);
-	    		   }
-	    		   try{
-	    			   JSONObject jresult = new JSONObject(responseStrBuilder.toString());
-	    			   this.AuthToken = jresult.getString("authentication_token");
-	    			   onAsyncResult.onResult(true,this.AuthToken);
-	    		   }catch(Exception e) {
-	    			   Log.d("JSON InputStream", e.getLocalizedMessage());
 	    		   }
 	    	   }else{
-	    		  onAsyncResult.onResult(false,"Failed"); 
+	    		  result = "Failed";
+	    		   
 	    	   }
 	       }else{
 	    	   if(getOption().equals(Constants.GSTATE_OPT)){
 	    		
-	    		   StringBuilder responseStrBuilder = new StringBuilder();
+	    		   //StringBuilder responseStrBuilder = new StringBuilder();
 	    		   while((line = bufferedReader.readLine()) != null){
 	    			   result += line;
-	    			   responseStrBuilder.append(line);
-	    		   }
-	    		   
-	    		   try{
-	    			   JSONObject jresult = new JSONObject(responseStrBuilder.toString());
-	    			   onAsyncResult.onStateResult(true, jresult);
-	    			   
-	    		   }catch(Exception e) {
-	    			   Log.d("JSON InputStream", e.getLocalizedMessage());
+	    			   //responseStrBuilder.append(line);
 	    		   }
 	    		   
 	    	   }else{

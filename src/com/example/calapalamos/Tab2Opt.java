@@ -193,7 +193,7 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
 				
 			}
 			
-	   };
+};
 	   
 	   public void setEnableDisable(View v){
 			Green_check = (RadioButton)v.findViewById(R.id.cFlagGreen);

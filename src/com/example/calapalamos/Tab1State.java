@@ -10,6 +10,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.calapalamos.library.HttpAsync;
+import com.example.calapalamos.library.HttpAsync.OnAsyncResult;
+
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -38,6 +41,7 @@ public class Tab1State extends Fragment {
         
 		View v = inflater.inflate(R.layout.activity_tab1_state, container, false);
        
+		activity = (OptionsActivity) getActivity();
 		eState=(TextView)v.findViewById(R.id.ETState);
 		eFlag=(TextView)v.findViewById(R.id.ETFlag);
 		eDirty=(TextView)v.findViewById(R.id.ETDirty);
@@ -47,7 +51,24 @@ public class Tab1State extends Fragment {
 		tHappy=(TextView)v.findViewById(R.id.THappy);
 		bKids=(Button)v.findViewById(R.id.BKids);
 		Log.d("TAB1","tab1");
-		  		
+		JSONObject jSend = new JSONObject();
+		JSONObject jUser = new JSONObject();
+		try {
+
+        	jUser.put("authenticationToken",activity.getAuthToken());
+	        jSend.put("user", jUser);
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    	 //OptionsActivity activity = (OptionsActivity) getActivity();
+    	// jSend.put("state", activity.getState()); //coger el estado 
+       
+		Log.d("TAB1","1");
+        HttpAsync aStateTask = new HttpAsync(v.getContext(),Constants.GSTATE_OPT);  
+        aStateTask.setOnResultListener(asynResult);
+        aStateTask.execute(jSend);
+		
 	    //recogemos los datos pasados desde LaFoscaMain
 	    try {
 	    	Log.d("TAB1","2");
@@ -133,4 +154,19 @@ public class Tab1State extends Fragment {
 	    return jsons;
 	}
 
+	OnAsyncResult asynResult = new OnAsyncResult() {  
+
+		@Override
+		public void onResult(final boolean resultCode, final String message) {
+			// TODO Auto-generated method stub
+			Log.d("onResult TAB1",message);			
+		}
+
+		@Override
+		public void onStateResult(boolean resultCode, JSONObject j) {
+			// TODO Auto-generated method stub
+			Log.d("onStateResult TAB1","");	
+		}
+		
+   };
 }

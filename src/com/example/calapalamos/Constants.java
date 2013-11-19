@@ -35,6 +35,7 @@ public class Constants extends Application{
 	public final static String REG_OK = "HTTP/1.1 201 Created";
 	public final static String CLOSE_OK = "HTTP/1.1 200 OK closed";
 	public final static String OPEN_OK = "HTTP/1.1 200 OK open";
+	public final static String GSTATE_OK = "HTTP/1.1 200 OK";
 	public final static String FLAG_OK = "HTTP/1.1 204 No Content";
 	public final static String THROW_CLEAN_OK = "HTTP/1.1 201 Created";
 	public final static String LOG_IN_FAILED = "HTTP/1.1 401 Unauthorized";

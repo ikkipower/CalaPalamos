@@ -11,6 +11,7 @@ public class MiTabListener implements ActionBar.TabListener {
 
         private Fragment fragment;
         
+        
         public MiTabListener(Fragment fg)
         {
                 this.fragment = fg;
@@ -23,7 +24,7 @@ public class MiTabListener implements ActionBar.TabListener {
         
         @Override
         public void onTabSelected(Tab tab, FragmentTransaction ft) {
-                Log.i("ActionBar", tab.getText() + " seleccionada.");
+            	Log.i("ActionBar", tab.getText() +  " seleccionada.");          
                 ft.replace(android.R.id.content, fragment);
         }
         

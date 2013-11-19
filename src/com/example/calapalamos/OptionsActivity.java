@@ -9,6 +9,7 @@ package com.example.calapalamos;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import com.example.calapalamos.library.MiTabListener;
 
 import android.app.ActionBar;
@@ -99,7 +100,10 @@ public class OptionsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_options);
 
+		setAuthToken(getIntent().getStringExtra("AuthToken"));
 
+
+		
 		//Obtenemos una referencia a la actionbar
 	    ActionBar abar = getActionBar();
 	 
@@ -123,7 +127,7 @@ public class OptionsActivity extends Activity {
 	    abar.addTab(tab2);
 	    
 	    
-        setAuthToken(getIntent().getStringExtra("AuthToken"));
+        
         
 		try {
 			JSONObject jstate = new JSONObject(getIntent().getStringExtra("state"));
