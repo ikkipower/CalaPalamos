@@ -6,6 +6,7 @@ package com.example.calapalamos;
 
 
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,6 +17,8 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
 
 /**
  * @author i2131344
@@ -114,14 +117,16 @@ public class OptionsActivity extends Activity {
 		
 		//Obtenemos una referencia a la actionbar
 	    ActionBar abar = getActionBar();
+	   
 	 
 	    //Establecemos el modo de navegacion por tabs
 	    abar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-	 
+	   
 	    //Creamos las tabs
 	    ActionBar.Tab tab1 = abar.newTab().setText("State");
 	    ActionBar.Tab tab2 = abar.newTab().setText("Change");
 	    ActionBar.Tab tab3 = abar.newTab().setText("Weather");
+	   
 	    //Creamos los fragments de cada tabs
 	    Fragment tab1frag = new Tab1State();
 	    Fragment tab2frag = new Tab2Opt();
@@ -146,12 +151,14 @@ public class OptionsActivity extends Activity {
 				setDirty(jstate.getString("dirtiness"));			
 				setHappy(jstate.getString("happiness"));
 				setKids(jstate.getString("kids"));
+				//JSONArray js = new JSONArray(getKids());
+				//Log.d("optKids", js.getJSONObject(2).toString());
 		     	setFlag(jstate.getString("flag"));
+		     	//TODO add kids string
 			}
 
 			
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

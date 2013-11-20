@@ -24,15 +24,19 @@
     <string name="flag_text">Bandera:</string>
     <string name="cflag_text">Cambiar Bandera</string>
     <string name="nivea_text">Lanzar Balones:</string>
-    <string name="throw_text">Lanzar</string> 
+    <string name="throw_text">Lanzar</string>
     <string name="clean_text">Limpiar</string>
     <string name="happy_text">Felicidad:</string>
-    <string name="dirty_text">Suciedad:</string>  
-    <string name="kids_text">Listado de Niños</string>  
+    <string name="dirty_text">Suciedad:</string>
+    <string name="kids_text">Listado de Niños</string>
     <string name="title_activity_mi_tab_listener">MiTabListener</string>
     <string name="change_state">Cambiar</string>
     <string name="check_green">Green</string>
     <string name="check_yellow">Yellow</string>
     <string name="check_red">Red</string>
+    <string name="title_activity_kids_list">KidsListActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
+    <string name="action_close">Close</string>
     
 </resources>

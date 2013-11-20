@@ -46,6 +46,10 @@
             android:name="com.example.calapalamos.library.MiTabListener"
             android:label="@string/title_activity_mi_tab_listener" >
         </activity>
+        <activity
+            android:name="com.example.calapalamos.KidsListActivity"
+            android:label="@string/title_activity_kids_list" >
+        </activity>
     </application>
 
 </manifest>

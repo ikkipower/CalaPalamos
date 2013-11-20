@@ -14,9 +14,13 @@ import com.example.calapalamos.library.HttpAsync;
 import com.example.calapalamos.library.HttpAsync.OnAsyncResult;
 
 import android.os.Bundle;
+import android.app.ActionBar;
 import android.app.Fragment;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -32,7 +36,7 @@ public class Tab1State extends Fragment {
 	TextView tFlag;
 	TextView tHappy;
 	TextView tDirty;
-	Button bKids;
+	Button btnKids;
 	OptionsActivity activity;
     
 	
@@ -42,6 +46,8 @@ public class Tab1State extends Fragment {
         
 		View v = inflater.inflate(R.layout.activity_tab1_state, container, false);
        
+		
+		
 		activity = (OptionsActivity) getActivity();
 		eState=(TextView)v.findViewById(R.id.ETState);
 		eFlag=(TextView)v.findViewById(R.id.ETFlag);
@@ -50,7 +56,7 @@ public class Tab1State extends Fragment {
 		tFlag=(TextView)v.findViewById(R.id.TFlag);
 		tDirty=(TextView)v.findViewById(R.id.TDirty);
 		tHappy=(TextView)v.findViewById(R.id.THappy);
-		bKids=(Button)v.findViewById(R.id.BKids);
+		btnKids=(Button)v.findViewById(R.id.BKids);
 		
 		Log.d("TAB1","tab1");
 		JSONObject jSend = new JSONObject();
@@ -64,7 +70,7 @@ public class Tab1State extends Fragment {
 			e1.printStackTrace();
 		}
 
-		activity = (OptionsActivity) getActivity();
+		
         if(activity.getInitCond()==false)
         {
         	HttpAsync aStateTask = new HttpAsync(v.getContext(),Constants.GSTATE_OPT);  
@@ -75,16 +81,26 @@ public class Tab1State extends Fragment {
         	
         }
         
+    	btnKids.setOnClickListener(new View.OnClickListener(){
+		      @Override
+		      public void onClick(View v) {
+	        	   Intent intent = new Intent(v.getContext(), KidsListActivity.class);
+				   intent.putExtra("Kids", activity.getKids());  
+				   startActivity(intent);
+		      };	
+		
+	    });
 		
 	    //recogemos los datos pasados desde LaFoscaMain
 	    
        
-        Log.d("TAB1","2");
+        //Log.d("TAB1","2");
 		
 		
 		setElState();
     	
-		
+		//Report that this fragment would like to participate in populating the options menu by receiving a call to
+		//setHasOptionsMenu(true);
     	
     	return v;
         
@@ -93,10 +109,10 @@ public class Tab1State extends Fragment {
 	public void setElState(){
 		activity = (OptionsActivity) getActivity();
 		State = activity.getState();
-		Log.d("TAB1","3");
+		//Log.d("TAB1","3");
 		eState.setText(State);		
 
-		Log.d("TAB1","4");
+		//Log.d("TAB1","4");
 		if(State.equals("closed"))
 		{
 			tFlag.setEnabled(false);
@@ -105,7 +121,7 @@ public class Tab1State extends Fragment {
 			eFlag.setEnabled(false);
 			eDirty.setEnabled(false);
 			eHappy.setEnabled(false);
-			bKids.setEnabled(false);
+			btnKids.setEnabled(false);
 			Log.d("CLoSED","CLOSED");
 			
 		}else{
@@ -115,7 +131,7 @@ public class Tab1State extends Fragment {
 			eFlag.setEnabled(true);
 			eDirty.setEnabled(true);
 			eHappy.setEnabled(true);
-			bKids.setEnabled(true);				
+			btnKids.setEnabled(true);				
 
             /*JSONArray ka= new JSONArray(activity.getKids());		
 			List<JSONObject> ja = sortKidsObjects(ka);*/
@@ -139,35 +155,7 @@ public class Tab1State extends Fragment {
 	 * @param array
 	 * @return
 	 */
-	public static List<JSONObject> sortKidsObjects(JSONArray array) {
-	    List<JSONObject> jsons = new ArrayList<JSONObject>();
-	    for (int i = 0; i < array.length(); i++) {
-	        try {
-				jsons.add(array.getJSONObject(i));
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	    }
-	    Collections.sort(jsons, new Comparator<JSONObject>() {
-	        @Override
-	        public int compare(JSONObject lhs, JSONObject rhs) {
-	            Integer lid = 0;
-	            Integer rid = 0;
-				try {
-					lid = lhs.getInt("age");
-					rid = rhs.getInt("age");
-					
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-	            
-	            return rid.compareTo(lid);
-	        }
-	    });
-	    return jsons;
-	}
+
 
 	OnAsyncResult asynResult = new OnAsyncResult() {  
 
@@ -200,4 +188,10 @@ public class Tab1State extends Fragment {
 		}
 		
    };
+   
+  /* @Override
+   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+       inflater.inflate(R.menu.tab1_state, menu);
+       super.onCreateOptionsMenu(menu,inflater);
+   }*/
 }
