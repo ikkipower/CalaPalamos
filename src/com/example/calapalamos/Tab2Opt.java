@@ -146,7 +146,7 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
 				if(resultCode==true){
 					OptionsActivity activity = (OptionsActivity) getActivity();
 					
-                        if(message.equals("open")){
+                        /*if(message.equals("open")){
                         	activity.setState(message);
     						Log.d("Estado Cambiado",message);
                             btnLimpiar.setEnabled(false);
@@ -176,10 +176,10 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
     						btnLanzar.setEnabled(false);
     						
     						btnFlag.setEnabled(false);
-                        }else{
+                        }else{*/
                         	activity.setFlag(message);
     						Log.d("Flag Cambiado",message);
-                        }
+                        //}
 
 				}else{
 					Log.d("NO Cambiado",message);
@@ -190,7 +190,47 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
 			@Override
 			public void onStateResult(boolean resultCode, JSONObject j) {
 				// TODO Auto-generated method stub
-				
+				OptionsActivity activity = (OptionsActivity) getActivity();
+				try {
+					if(j.getString("state").equals("open")){
+						activity.setState(j.getString("state"));
+						activity.setFlag(j.getString("flag"));
+						activity.setDirty(j.getString("dirtiness"));
+						activity.setHappy(j.getString("happiness"));
+						Log.d("Estado Cambiado",activity.getState());
+                        btnLimpiar.setEnabled(false);
+						btnLanzar.setEnabled(true);
+						btnFlag.setEnabled(true);
+						Green_check.setEnabled(true);
+						Yellow_check.setEnabled(true);
+						Red_check.setEnabled(true);
+						if(activity.getFlag().equals("0"))
+		            	 {
+		            		 Green_check.setChecked(true); 
+		            	 }else{
+		            		 if(activity.getFlag().equals("1"))
+		            		 {
+		            			 Yellow_check.setChecked(true);
+		            		 }else{
+		            			 Red_check.setChecked(true);
+		            		 }
+		            	 }
+					}else if(j.getString("state").equals("closed")){
+                    	activity.setState(j.getString("state"));
+						Log.d("Estado Cambiado clo",activity.getState());
+						Green_check.setEnabled(false);
+						Yellow_check.setEnabled(false);
+						Red_check.setEnabled(false);
+						btnLimpiar.setEnabled(true);
+						btnLanzar.setEnabled(false);
+						
+						btnFlag.setEnabled(false);
+						
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			
 };

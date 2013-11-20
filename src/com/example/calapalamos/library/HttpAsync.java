@@ -15,12 +15,10 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.calapalamos.Constants;
-import com.example.calapalamos.LaFoscaMain;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -60,7 +58,13 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		this.option = opt;
 	}
 
-
+	public String getAuthToken(){
+		return this.AuthToken;
+	}
+	
+	public void setAuthToken(String a){
+		this.AuthToken = a;
+	}
 	
 	public Context getContext(){
 		return this.context;
@@ -91,8 +95,9 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		if(getOption().equals(Constants.REG_OPT)){
 			result = postFunct(j[0]);
 	    }else if(getOption().equals(Constants.LOG_IN_OPT)){
-        	//result = getFunct(j[0]);
-	    	temp_res= getFunct(j[0],1); //LOG_IN_OPT
+	    	Log.d("LOGIN",j[0].toString());
+	    	result = logIn(j[0]);
+	    	/*temp_res= getFunct(j[0],1); //LOG_IN_OPT
 
 	    	if(!temp_res.equals(Constants.LOG_IN_FAILED)){
 	    		
@@ -119,13 +124,27 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	    		Log.d("LOGIN","FAILED");
 	    		result = temp_res;
 
-	    	}
+	    	}*/
         }else if(getOption().equals(Constants.GSTATE_OPT)){
-        	result = getFunct(j[0],1); //GSTATE_OPT
-        	Log.d("GSTATE state",getOption().toString());
+        	try {
+				setAuthToken(j[0].getJSONObject("user").getString("authenticationToken"));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        	//setAuthToken(j[0].getString(name))
+        	result = getState(); //GSTATE_OPT
+        	
         }else if(getOption().equals(Constants.CHANGE_STATE_OPT)){
+        	try {
+				setAuthToken(j[0].getString("Auth"));
+				Log.d("PUTFUNCT",getAuthToken());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         	result = putFunct(j[0]); //CHANGE_STATE
-            Log.d("change state ",j[0].toString());
+            Log.d("change state ",result);
         }else if(getOption().equals(Constants.CHANGE_STATE_FLAG)){
         	result = putFunct(j[0]); //CHANGE_FLAG
         	Log.d("change flag",j[0].toString());
@@ -159,18 +178,22 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		 if(getOption().equals(Constants.CHANGE_STATE_OPT))
      	 {
 	        	
-	        	if(res.equals(Constants.OPEN_OK)){
+	        	if(!res.equals("HTTP/1.1 401 Unauthorized")){
 
-	        		onAsyncResult.onResult(true,"open");
+	        		JSONObject jresult;
+					try {
+						jresult = new JSONObject(res);
+						onAsyncResult.onStateResult(true, jresult);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+                    
 	        	}else{ 
-	        		if(res.equals(Constants.CLOSE_OK)){
-	        			onAsyncResult.onResult(true,"closed");
-	        		}
-	        	    else{
+	        		
+			        //onAsyncResult.onResult(false,res);
 
-			        onAsyncResult.onResult(false,res);
-
-		            }
+		  
 		        }
 
      	 }else{ 
@@ -240,8 +263,97 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	    	public abstract void onResult(boolean resultCode, String message);
 	    	public abstract void onStateResult(boolean resultCode, JSONObject j);
 	    }  
+	      
+	    
+	    public String logIn(JSONObject j){
+	    	String tmp = "";
+	    	InputStream inputStream = null;
+	    	
+	     try {
+	        	
+	    	HttpClient client = new DefaultHttpClient();
+	    	HttpGet httpGet;	 
+	    	httpGet = new HttpGet(Constants.url+Constants.SUFIX_LOGIN);
+    		String authUser = j.getJSONObject("user").getString("username").toString();
+	        String authPass = j.getJSONObject("user").getString("password").toString();    
+	        UsernamePasswordCredentials credentials =  new UsernamePasswordCredentials(authUser, authPass);
+	        BasicScheme scheme = new BasicScheme();
+	        httpGet.addHeader(scheme.authenticate(credentials, httpGet));
+    	    
+	        httpGet.setHeader("Accept", "application/json");
+	        httpGet.setHeader("Content-type", "application/json");
+	        // 8. Execute get request to the given URL
+	        HttpResponse httpResponse = client.execute(httpGet);
+	        StatusLine content = httpResponse.getStatusLine();
+	        Log.d("getFunc CONTENT",content.toString());
+	        // 9. receive response as inputStream
+	        inputStream = httpResponse.getEntity().getContent();
+	        if(!content.toString().equals(Constants.LOG_IN_FAILED))
+    		{
+	        	
+	        	String resLogIn = manageInputStream(inputStream,content);
+	        	Log.d("resLogIn",resLogIn);
+	        	JSONObject jlog = new JSONObject(resLogIn);
+	        	setAuthToken(jlog.getString("authentication_token"));
+	        	Log.d("temp",getAuthToken());
+	        	String temp = getState();
+	        	JSONObject jState = new JSONObject(temp);
 	        
+                tmp = jState.toString();
+    	        
+    		}
+    		else
+    		{
+    			tmp = content.toString();
+    		}
+	    } catch (Exception e) {
+	    	 Log.d("InputStream", e.getLocalizedMessage());
+	    }   
+	    	
+	     return tmp;
+}	    
 
+	    public String getState(){
+	    	String tmp = "";
+	    	
+	    	
+    	    try {
+    	    	//getState
+    	    	HttpClient client = new DefaultHttpClient();
+    	    	HttpGet httpGet = new HttpGet(Constants.url+Constants.SUFIX_GET_STATE);
+        		httpGet.setHeader("Authorization", "Token token="+ getAuthToken());
+    	    	Log.d("AUTH",getAuthToken());
+    	    	httpGet.setHeader("Accept", "application/json");
+    	        httpGet.setHeader("Content-type", "application/json");
+    	        // 8. Execute get request to the given URL
+    	        HttpResponse httpResponse = client.execute(httpGet);
+    	        StatusLine content = httpResponse.getStatusLine();
+    	        Log.d("getFunc CONTENTO",content.toString());
+    	        // 9. receive response as inputStream
+    	        InputStream inputStream = httpResponse.getEntity().getContent();
+    	        
+    			if(content.toString().equals(Constants.GSTATE_OK))
+        		{
+        			Log.d("getFunc GET STATE",content.toString());
+        			try {
+    					tmp = manageInputStream(inputStream,content);
+    				} catch (IOException e) {
+    					// TODO Auto-generated catch block
+    					e.printStackTrace();
+    				}
+        		}
+        		else
+        		{
+        			tmp = "Failed";
+        		}
+    	    } catch (Exception e) {
+   	    	 Log.d("InputStream", e.getLocalizedMessage());
+   	        }   
+	        
+	        
+	        return tmp;
+	    }
+	    
 		
 		 public String postFunct(JSONObject j){
 			 InputStream inputStream = null;
@@ -320,7 +432,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		    	String tmp = "";
 		    	
 		        try {
-		        	Log.d("putFunct",""+j.getString("Auth"));
+		        	Log.d("putFunct",""+getAuthToken());
 		        	
 		        	
 		        	HttpClient client = new DefaultHttpClient();
@@ -347,14 +459,13 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		 		        
 		 		        // 6. set httpPost Entity
 		 		        httpPut.setEntity(se);
-
-		        		
+    		
 		        		
 		        	}
 		        	
 		        	
 		        	
-		        	httpPut.setHeader("Authorization", "Token token="+ j.getString("Auth"));
+		        	httpPut.setHeader("Authorization", "Token token="+ getAuthToken());
 			        httpPut.setHeader("Accept", "application/json");
 			        httpPut.setHeader("Content-type", "application/json");
 			        
@@ -370,11 +481,29 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		        	
 		        	if(getOption().equals(Constants.CHANGE_STATE_OPT))
 		        	{
-		        		if(j.getString("state").equals("open"))
+		        		String temp;
+						if(j.getString("state").equals("open"))
 		        	    {
-		        			tmp = content.toString()+" closed";
+		        			temp = content.toString()+" closed";
+		             		if(temp.equals(Constants.CLOSE_OK))
+		             		{
+		             		    
+		             			tmp = getState();
+		             		}
+		             		else{
+		             			tmp = temp;
+		             		}
+		        			
 		             	}else{
-		             		tmp = content.toString()+" open";
+		             		temp = content.toString()+" open";
+		             		if(temp.equals(Constants.OPEN_OK))
+		             		{
+		             		
+		             			tmp = getState();
+		             		}
+		             		else{
+		             			tmp = temp;
+		             		}
 		             	}
 		        	}else{
 		        		if(content.toString().equals(Constants.FLAG_OK)){
@@ -383,11 +512,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
                             tmp = content.toString();
                         }
 		        		
-		        	}
-		        	
-		        	 
-		        	
-		        		    
+		        	}	        		    
 			        
 			       
 		        } catch (Exception e) {
@@ -398,72 +523,6 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	    	
 		    }		 
 		
-
-	    public String getFunct(JSONObject j, int opt){
-	    	
-	    	String tmp = "";
-	    	InputStream inputStream = null;
-	    	
-	     try {
-	        	
-	    	HttpClient client = new DefaultHttpClient();
-	    	HttpGet httpGet;
-	    	if((getOption().equals(Constants.GSTATE_OPT) && opt == 1)||
-	    	  (getOption().equals(Constants.LOG_IN_OPT) && opt == 0))
-	    	{
-	    		httpGet = new HttpGet(Constants.url+Constants.SUFIX_GET_STATE);
-	    		httpGet.setHeader("Authorization", "Token token="+ j.getJSONObject("user").getString("authenticationToken"));
-	    	    Log.d("AUTH"+opt,j.getJSONObject("user").getString("authenticationToken"));
-	    	}else{
-	    		httpGet = new HttpGet(Constants.url+Constants.SUFIX_LOGIN);
-	    		String authUser = j.getJSONObject("user").getString("username").toString();
-		        String authPass = j.getJSONObject("user").getString("password").toString();    
-		        UsernamePasswordCredentials credentials =  new UsernamePasswordCredentials(authUser, authPass);
-		        BasicScheme scheme = new BasicScheme();
-		        httpGet.addHeader(scheme.authenticate(credentials, httpGet));
-	    	}
-	    
-	        httpGet.setHeader("Accept", "application/json");
-	        httpGet.setHeader("Content-type", "application/json");
-	        // 8. Execute get request to the given URL
-	        HttpResponse httpResponse = client.execute(httpGet);
-	        StatusLine content = httpResponse.getStatusLine();
-	        Log.d("getFunc CONTENT",content.toString());
-	        // 9. receive response as inputStream
-	        inputStream = httpResponse.getEntity().getContent();
-	        
-	        if(getOption().equals(Constants.GSTATE_OPT))
-	    	{
-	    		if(content.toString().equals(Constants.GSTATE_OK))
-	    		{
-	    			Log.d("getFunc GET STATE",content.toString());
-	    			tmp = manageInputStream(inputStream,content);
-	    		}
-	    		else
-	    		{
-	    			tmp = "Failed";
-	    		}
-	        	
-	    	}else{
-	    		if(!content.toString().equals(Constants.LOG_IN_FAILED))
-	    		{
-	    			Log.d("getFunc LOGIN",content.toString());
-	    			tmp = manageInputStream(inputStream,content);
-	    		}
-	    		else
-	    		{
-	    			tmp = content.toString();
-	    		}
-	    	} 
-	       
-	     } catch (Exception e) {
-	    	 Log.d("InputStream", e.getLocalizedMessage());
-	     }   
-	    	
-	     return tmp;
-
-	    }
-	   
 	    
 	    private String manageInputStream(InputStream inputStream, StatusLine content) throws IOException{
 	       BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
@@ -481,24 +540,12 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	    		   
 	    	   }
 	       }else{
-	    	   if(getOption().equals(Constants.GSTATE_OPT)){
-	    		
-	    		   //StringBuilder responseStrBuilder = new StringBuilder();
-	    		   while((line = bufferedReader.readLine()) != null){
-	    			   result += line;
-	    			   //responseStrBuilder.append(line);
-	    		   }
-	    		   
-	    	   }else{
-	    	          
-	    		   Log.d("manage others",bufferedReader.readLine());
-		           while((line = bufferedReader.readLine()) != null)
-		           {	   
-		        	   
-		        	   result += line;
-		           }
-		           
-	    	   }
+	           while((line = bufferedReader.readLine()) != null)
+	           {	   
+	        	   
+	        	   result += line;
+	           }
+	           //Log.d("manage others result",result);
 	    	   
 	       }
 	       inputStream.close();
