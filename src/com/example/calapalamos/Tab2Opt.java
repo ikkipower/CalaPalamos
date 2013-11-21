@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.calapalamos.library.HttpAsync;
+import com.example.calapalamos.library.OpenWeather;
 import com.example.calapalamos.library.HttpAsync.OnAsyncResult;
 
 import android.os.Bundle;
@@ -147,7 +148,7 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
 	OnAsyncResult asynResult = new OnAsyncResult() {  
 
 			@Override
-			public void onResult(final boolean resultCode, final JSONObject message, final byte[] image) {
+			public void onResult(final boolean resultCode, final OpenWeather weather)  {
 
 			}
 

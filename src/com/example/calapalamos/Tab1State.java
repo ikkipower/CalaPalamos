@@ -1,26 +1,19 @@
 package com.example.calapalamos;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.calapalamos.library.HttpAsync;
+import com.example.calapalamos.library.OpenWeather;
 import com.example.calapalamos.library.HttpAsync.OnAsyncResult;
 
 import android.os.Bundle;
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -132,9 +125,6 @@ public class Tab1State extends Fragment {
 			eDirty.setEnabled(true);
 			eHappy.setEnabled(true);
 			btnKids.setEnabled(true);				
-
-            /*JSONArray ka= new JSONArray(activity.getKids());		
-			List<JSONObject> ja = sortKidsObjects(ka);*/
 			
 			if(activity.getFlag().equals("1"))
 			    eFlag.setText("Yellow");
@@ -160,7 +150,7 @@ public class Tab1State extends Fragment {
 	OnAsyncResult asynResult = new OnAsyncResult() {  
 
 		@Override
-		public void onResult(final boolean resultCode, final JSONObject message, final byte[] image) {
+		public void onResult(final boolean resultCode, final OpenWeather weather)  {
 			// TODO Auto-generated method stub
 				
 		}

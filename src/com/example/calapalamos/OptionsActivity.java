@@ -6,7 +6,6 @@ package com.example.calapalamos;
 
 
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,8 +16,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
+
 
 /**
  * @author i2131344

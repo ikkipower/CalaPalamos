@@ -1,7 +1,6 @@
 package com.example.calapalamos;
 
 import android.app.Application;
-import android.content.Context;
 
 /**
  * @author i2131344
@@ -11,14 +10,14 @@ import android.content.Context;
 public class Constants extends Application{
 	
 	//options variables
-	public final static String REG_OPT = "POST";
-	public final static String LOG_IN_OPT = "LOGIN";
-	public final static String GSTATE_OPT = "GSTATE";
-	public final static String STATE_OPT = "POST";
-	public final static String CHANGE_STATE_OPT = "PUT";
-	public final static String CHANGE_STATE_FLAG = "PUT_FLAG";
-	public final static String THROW_OPT = "POST_BALLS";
-	public final static String CLEAN_OPT = "POST_CLEAN";
+	public final static String REG_OPT = "1";
+	public final static String LOG_IN_OPT = "2";
+	public final static String GSTATE_OPT = "3";
+	public final static String STATE_OPT = "4";
+	public final static String CHANGE_STATE_OPT = "5";
+	public final static String CHANGE_STATE_FLAG = "6";
+	public final static String THROW_OPT = "7";
+	public final static String CLEAN_OPT = "8";
 	public final static String WEATHER_OPT = "9";
 	
 	//url sufix
@@ -38,35 +37,9 @@ public class Constants extends Application{
 	
 
 	//url http messages
-	public final static String REG_OK = "HTTP/1.1 201 Created";
-	public final static String CLOSE_OK = "HTTP/1.1 200 OK closed";
-	public final static String OPEN_OK = "HTTP/1.1 200 OK open";
-	public final static String GSTATE_OK = "HTTP/1.1 200 OK";
-	public final static String WEATHER_OK = "HTTP/1.1 200 OK";
+	public final static String CREATED_201= "HTTP/1.1 201 Created";
+	public final static String OK_200 = "HTTP/1.1 200 OK";
 	public final static String FLAG_OK = "HTTP/1.1 204 No Content";
-	public final static String THROW_CLEAN_OK = "HTTP/1.1 201 Created";
 	public final static String LOG_IN_FAILED = "HTTP/1.1 401 Unauthorized";
-	
-    /**
-     * Keeps a reference of the application context
-     */
-/*    private static Context sContext;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        sContext = getApplicationContext();
-
-    }*/
-
-    /**
-     * Returns the application context
-     *
-     * @return application context
-     */
-/*    public static Context getContext() {
-        return sContext;
-    }*/
 	
 }

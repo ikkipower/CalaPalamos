@@ -4,8 +4,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.calapalamos.library.HttpAsync;
+import com.example.calapalamos.library.OpenWeather;
 import com.example.calapalamos.library.HttpAsync.OnAsyncResult;
-import com.example.calapalamos.library.User;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -37,10 +37,27 @@ public class LaFoscaMain extends Activity implements OnClickListener {
     TextView regLink;
     
     //save username and token
-    //private String username;
-    //private String authToken;
-    private User user; 
-	
+    private String userName;
+    private String authToken;
+    //private User user; 
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String username) {
+		this.userName = username;
+	}
+
+	public String getAuthToken() {
+		return authToken;
+	}
+
+	public void setAuthToken(String authToken) {
+		this.authToken = authToken;
+	}    
+    
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,7 +67,7 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 		passwdLogin=(EditText)findViewById(R.id.passwdLogin);
 		btnLogin= (Button)findViewById(R.id.btnLogin);
 		regLink = (TextView)findViewById(R.id.link_to_register);
-		user = new User();
+		//user = new User();
 		//passwdLogin.setHint("Password");
 		//nameLogin.setHint("UserName");
 		if(isConnected())
@@ -95,8 +112,8 @@ public class LaFoscaMain extends Activity implements OnClickListener {
                 JSONObject jReg = new JSONObject();
                 JSONObject jUser = new JSONObject();
                 try {
-                	user.setName(nameLogin.getText().toString());
-                	jUser.put("username",user.getName());
+                	setUserName(nameLogin.getText().toString());
+                	jUser.put("username",getUserName());
                 	jUser.put("password",passwdLogin.getText().toString());
     		        jReg.put("user", jUser);
     		        
@@ -165,7 +182,7 @@ public class LaFoscaMain extends Activity implements OnClickListener {
     OnAsyncResult asynResult = new OnAsyncResult() {  
 
 		@Override
-		public void onResult(final boolean resultCode, final JSONObject message, final byte[] image) {
+		public void onResult(final boolean resultCode, final OpenWeather weather) {
 			// TODO Auto-generated method stub		
 		}
 		
@@ -175,12 +192,12 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 			// TODO Auto-generated method stub
  		           try{
  		        	   Log.d("MAIN onSTateResult",j.toString());
- 		        	   user.setAuthToken(j.getString("AuthToken"));
+ 		        	   setAuthToken(j.getString("AuthToken"));
  		        	   
  		        	   Intent intent = new Intent(LaFoscaMain.this, OptionsActivity.class);
 					   intent.putExtra("init_cond", true);
-                       intent.putExtra("username", user.getName());
-					   intent.putExtra("AuthToken", user.getAuthToken());
+                       intent.putExtra("username", getUserName());
+					   intent.putExtra("AuthToken", getAuthToken());
 					   //Log.d("INTENT",j.getJSONObject("jresult").toString());
 					   intent.putExtra("state", j.getJSONObject("jresult").toString());
 					   startActivity(intent);
