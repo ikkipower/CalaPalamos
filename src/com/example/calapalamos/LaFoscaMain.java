@@ -165,16 +165,14 @@ public class LaFoscaMain extends Activity implements OnClickListener {
     OnAsyncResult asynResult = new OnAsyncResult() {  
 
 		@Override
-		public void onResult(final boolean resultCode, final String message) {
+		public void onResult(final boolean resultCode, final JSONObject message, final byte[] image) {
 			// TODO Auto-generated method stub		
 		}
 		
 		@Override
-		public void onStateResult(boolean resultCode, final JSONObject j) {
+		public void onStateResult(boolean resultCode, int i, final JSONObject j) {
 		   
 			// TODO Auto-generated method stub
-/*			runOnUiThread(new Runnable() {
-				public void run() { */
  		           try{
  		        	   Log.d("MAIN onSTateResult",j.toString());
  		        	   user.setAuthToken(j.getString("AuthToken"));
@@ -189,8 +187,7 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 		           }catch(Exception e) {
 			          Log.d("JSON onStateResult", e.getLocalizedMessage());
 		           }
-/*				}
-			});*/
+
 		
 
 		}  

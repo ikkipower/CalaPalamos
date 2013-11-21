@@ -19,6 +19,7 @@ public class Constants extends Application{
 	public final static String CHANGE_STATE_FLAG = "PUT_FLAG";
 	public final static String THROW_OPT = "POST_BALLS";
 	public final static String CLEAN_OPT = "POST_CLEAN";
+	public final static String WEATHER_OPT = "9";
 	
 	//url sufix
 	public final static String SUFIX_REGISTER = "/users";
@@ -29,13 +30,19 @@ public class Constants extends Application{
 	public final static String SUFIX_PUT_FLAG = "/flag";
 	public final static String SUFIX_POST_BALLS = "/nivea-rain";
 	public final static String SUFIX_POST_CLEAN = "/clean";
+	
+	
 	public final static String url = "http://lafosca-beach.herokuapp.com/api/v1";
+	public final static String weather_url = "http://api.openweathermap.org/data/2.5/weather?lat=41.8571344&lon=3.1433845&lang=es&units=metric";
+	public final static String weather_img_url = "http://openweathermap.org/img/w/";
+	
 
 	//url http messages
 	public final static String REG_OK = "HTTP/1.1 201 Created";
 	public final static String CLOSE_OK = "HTTP/1.1 200 OK closed";
 	public final static String OPEN_OK = "HTTP/1.1 200 OK open";
 	public final static String GSTATE_OK = "HTTP/1.1 200 OK";
+	public final static String WEATHER_OK = "HTTP/1.1 200 OK";
 	public final static String FLAG_OK = "HTTP/1.1 204 No Content";
 	public final static String THROW_CLEAN_OK = "HTTP/1.1 201 Created";
 	public final static String LOG_IN_FAILED = "HTTP/1.1 401 Unauthorized";
@@ -43,7 +50,7 @@ public class Constants extends Application{
     /**
      * Keeps a reference of the application context
      */
-    private static Context sContext;
+/*    private static Context sContext;
 
     @Override
     public void onCreate() {
@@ -51,15 +58,15 @@ public class Constants extends Application{
 
         sContext = getApplicationContext();
 
-    }
+    }*/
 
     /**
      * Returns the application context
      *
      * @return application context
      */
-    public static Context getContext() {
+/*    public static Context getContext() {
         return sContext;
-    }
+    }*/
 	
 }

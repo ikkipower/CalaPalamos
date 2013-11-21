@@ -160,13 +160,13 @@ public class Tab1State extends Fragment {
 	OnAsyncResult asynResult = new OnAsyncResult() {  
 
 		@Override
-		public void onResult(final boolean resultCode, final String message) {
+		public void onResult(final boolean resultCode, final JSONObject message, final byte[] image) {
 			// TODO Auto-generated method stub
-			Log.d("onResult TAB1",message);			
+				
 		}
 
 		@Override
-		public void onStateResult(boolean resultCode, JSONObject j) {
+		public void onStateResult(boolean resultCode, int i, JSONObject j) {
 			// TODO Auto-generated method stub
 			try {
 				activity = (OptionsActivity) getActivity();

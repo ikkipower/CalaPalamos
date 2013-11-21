@@ -12,6 +12,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.calapalamos.library.Kids;
+import com.example.calapalamos.library.KidsAdapter;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,53 +34,53 @@ public class KidsListActivity extends Activity {
 
 	ListView kLV;
 	List<JSONObject> j;
-	ArrayList<Map<String, String>> kidsList;
-	HashMap<String, String> item;
-	SimpleAdapter adapter;
+	List<Kids> kidsList;
+	//HashMap<String, String> item;
+	KidsAdapter adapter;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_kidslist);
-		JSONArray jkids;
+		//JSONArray jkids;
 		
 		kidsList = buildData();
-		item = new HashMap<String, String>();
+		//item = new HashMap<String, String>();
 		kLV=(ListView)findViewById(R.id.kidsLV);
+		adapter = new KidsAdapter(kidsList, this);
+		/*adapter = new KidsAdapter(this,
+                R.id.kidsLV,
+                kidsList);*/
 
-		
-		adapter = new SimpleAdapter(this, kidsList,
-		        R.layout.row_listview, new String[] {"name","age"},
-		        new int [] { R.id.nLV, R.id.aLV });
+
 		kLV.setAdapter(adapter);
 		
 	}
-
-	  private ArrayList<Map<String, String>> buildData() {
-		    ArrayList<Map<String, String>> list = new ArrayList<Map<String, String>>();
-		try {   
-		    JSONArray jkids = new JSONArray(getIntent().getExtras().getString("Kids"));
-			j = sortKidsObjects(jkids);
-		    
-		    for(int i=0; i < j.size() ; i++) {
-		    	JSONObject json_data = j.get(i);
-		    	list.add(putData(json_data.getString("name").toString(), json_data.getString("age").toString()));
-
-		    }
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}    
-		
-		    return list;
-	}
-
-		  private HashMap<String, String> putData(String name, String purpose) {
-		    HashMap<String, String> item = new HashMap<String, String>();
-		    item.put("name", name);
-		    item.put("age", purpose);
-		    return item;
-		  }
 	
+    private List<Kids> buildData() {
+        List<Kids> list = new ArrayList<Kids>();
+        try {   
+              JSONArray jkids = new JSONArray(getIntent().getExtras().getString("Kids"));
+	          j = sortKidsObjects(jkids);
+    
+              for(int i=0; i < j.size() ; i++) {
+    	           JSONObject json_data = j.get(i);
+    	           list.add(putData(json_data.getString("name").toString(), json_data.getString("age").toString()));
+
+              }
+        } catch (JSONException e) {
+        	//  TODO Auto-generated catch block
+	         e.printStackTrace();
+        }    
+
+       return list;
+    }
+	
+    private Kids putData(String name, String age) {
+		    Kids item = new Kids();
+		    item.setKid(name, age);
+		    return item;
+    }
 	
 	
 	public static List<JSONObject> sortKidsObjects(JSONArray array) {

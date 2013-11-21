@@ -1,6 +1,7 @@
 package com.example.calapalamos.library;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -32,9 +33,9 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 
 	private ProgressDialog pDialog;
 	private Context context;
-    private String option;
-	private String AuthToken;
-    
+    private String option = "";
+	private String AuthToken="";
+    private byte[] buffer;
     /*interface data*/
     OnAsyncResult onAsyncResult;  
     public void setOnResultListener(OnAsyncResult onAsyncResult) {  
@@ -96,34 +97,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	    }else if(getOption().equals(Constants.LOG_IN_OPT)){
 	    	Log.d("LOGIN",j[0].toString());
 	    	result = logIn(j[0]);
-	    	/*temp_res= getFunct(j[0],1); //LOG_IN_OPT
 
-	    	if(!temp_res.equals(Constants.LOG_IN_FAILED)){
-	    		
-	    		JSONObject jReg = new JSONObject();
-	            JSONObject jUser = new JSONObject();
-	            
-	            try {
-	            	JSONObject jresult = new JSONObject(temp_res);
-	            	jUser.put("username",jresult.getString("username"));
-	            	this.AuthToken=jresult.getString(("authentication_token"));
-	            	jUser.put("authenticationToken",this.AuthToken);
-			        jReg.put("user", jUser);
-			        Log.d("TEMP_RES",jReg.toString());
-			        //setOption(Constants.GSTATE_OPT);
-			        result = getFunct(jReg,0);
-	            } catch (JSONException e) {
-					// TODO Auto-generated catch block
-	            	   
-	            	   Log.e("Error JSON Register",null);
-					   e.printStackTrace();
-	            }
-	    		  //result = temp_res;
-	    	}else{
-	    		Log.d("LOGIN","FAILED");
-	    		result = temp_res;
-
-	    	}*/
         }else if(getOption().equals(Constants.GSTATE_OPT)){
         	try {
 				setAuthToken(j[0].getJSONObject("user").getString("authenticationToken"));
@@ -145,15 +119,23 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
         	result = putFunct(j[0]); //CHANGE_STATE
             Log.d("change state ",result);
         }else if(getOption().equals(Constants.CHANGE_STATE_FLAG)){
-        	result = putFunct(j[0]); //CHANGE_FLAG
-        	Log.d("change flag",j[0].toString());
+        	
+        	try {
+        		setAuthToken(j[0].getString("Auth"));
+        		result = putFunct(j[0]); //CHANGE_FLAG
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }else if(getOption().equals(Constants.THROW_OPT)){
-        	result = postFunct(j[0]); //CHANGE_FLAG
+        	result = postFunct(j[0]); 
+        	
         	Log.d("throw balls",getOption().toString());
         }else if(getOption().equals(Constants.CLEAN_OPT)){
         	result = postFunct(j[0]);
+        }else if(getOption().equals(Constants.WEATHER_OPT)){
+        	result = getWeather();
         }
-		
 		
         return result;
 	
@@ -163,7 +145,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	
 	 @Override
      protected void onPostExecute(String res) {
-		 Toast.makeText(getContext(), "Data! sended "+res, Toast.LENGTH_LONG).show();
+
 		 Log.d("resultado postExecute",res);
 		 
 		 if(!getOption().equals(Constants.GSTATE_OPT)){
@@ -182,7 +164,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	        		JSONObject jresult;
 					try {
 						jresult = new JSONObject(res);
-						onAsyncResult.onStateResult(true, jresult);
+						onAsyncResult.onStateResult(true, 4,jresult);
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -197,13 +179,26 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 
      	 }else{ 
      		if(getOption().equals(Constants.CHANGE_STATE_FLAG)){
+     			JSONObject jres=new JSONObject();
+     			if(res.equals("0") || res.equals("1") || res.equals("2")){
+     				try {
+     					jres.put("flag", res);
+     					Log.d("postExecute jFLAG",jres.toString());
+     					onAsyncResult.onStateResult(true,3,jres);
+     				} catch (JSONException e) {
+     					//TODO Auto-generated catch block
+     					e.printStackTrace();
+     				}
+     			}
+     			
      			Log.d("postExecute FLAG",res);
-        		if(res.equals("0") || res.equals("1") || res.equals("2")){
+        		/*if(res.equals("0") || res.equals("1") || res.equals("2")){
         			onAsyncResult.onResult(true,res);
         	 	
         		}else{
         			onAsyncResult.onResult(false,"flag_failed");
-        		}
+        			Log.d("NO Cambiado",res);
+        		}*/
      		}else{
      			if(getOption().equals(Constants.GSTATE_OPT)){
 
@@ -211,7 +206,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 					JSONObject jresult;
                     try {
                             jresult = new JSONObject(res);
-                            onAsyncResult.onStateResult(true, jresult);
+                            onAsyncResult.onStateResult(true, 2,jresult);
                     } catch (JSONException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -227,7 +222,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
      							jAuth = new JSONObject();
      							jAuth.put("AuthToken", this.AuthToken);
      							jAuth.put("jresult", jresult);
-     							onAsyncResult.onStateResult(true, jAuth);
+     							onAsyncResult.onStateResult(true, 1, jAuth);
      						} catch (JSONException e) {
      							// TODO Auto-generated catch block
      							e.printStackTrace();
@@ -259,8 +254,15 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	  */
 	   
 	    public interface OnAsyncResult {  
-	    	public abstract void onResult(boolean resultCode, String message);
-	    	public abstract void onStateResult(boolean resultCode, JSONObject j);
+	    	public abstract void onResult(boolean resultCode,JSONObject message, byte[] image);
+	    	public abstract void onStateResult(boolean resultCode, int i, JSONObject j);
+	    	/**
+	    	 * 1 -> Log in
+	    	 * 2 -> Get State
+	    	 * 3 -> Change Flag
+	    	 * 4 -> Change State 
+	    	 **/
+	    	
 	    }  
 	      
 	    
@@ -453,7 +455,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		 		        
 		 		        json = j.getString("flag_j");
 		 		        Log.d("json",j.getJSONObject("flag_j").getString("flag"));
-		 		        
+		 		        //Log.d("json",getAuthToken());
 		 		        StringEntity se = new StringEntity(json);
 		 		        
 		 		        // 6. set httpPost Entity
@@ -522,31 +524,83 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	    	
 		    }		 
 		
-	    
+	    public String getWeather(){
+	    	String tmp = "";
+	    	
+	    	
+    	    try {
+    	    	//getState
+    	    	HttpClient client = new DefaultHttpClient();
+    	    	HttpGet httpGet = new HttpGet(Constants.weather_url);
+        		
+    	    	Log.d("weather","weather");
+    	    	httpGet.setHeader("Accept", "application/json");
+    	        httpGet.setHeader("Content-type", "application/json");
+    	        // 8. Execute get request to the given URL
+    	        HttpResponse httpResponse = client.execute(httpGet);
+    	        StatusLine content = httpResponse.getStatusLine();
+    	        Log.d("GET Weather",content.toString());
+    	        if(content.toString().equals(Constants.WEATHER_OK)){
+    	        	//  9. receive response as inputStream
+    	        	InputStream inputStream = httpResponse.getEntity().getContent();
+    	        	tmp = manageInputStream(inputStream,content);
+    	            
+    	        	//
+    	        	//get icon
+    	        	//
+    	        	
+    	            /*InputStream is = null;
+    	            try {
+    	            	//falta el code
+    	            	httpGet = new HttpGet(Constants.weather_img_url+code);
+    	            	Log.d("weather img","img");
+    	    	    	httpGet.setHeader("Accept", "application/json");
+    	    	        httpGet.setHeader("Content-type", "application/json");
+    	    	        httpResponse = client.execute(httpGet);
+    	    	        content = httpResponse.getStatusLine();
+    	    	        Log.d("GET Weather",content.toString());
+    	    	        
+    	    	        
+    	    	        byte[] buffer = new byte[1024];
+    	                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	                 
+    	                while ( is.read(buffer) != -1)
+    	                    baos.write(buffer);
+    	                 
+    	                //save state baos.toByteArray();
+    	            }
+    	            catch(Throwable t) {
+    	                t.printStackTrace();
+    	            }*/
+    	    
+    	        	
+    	        }else{
+    	        	tmp = content.toString();
+    	        }
+    	        	
+    	        Log.d("GET Weather",tmp);
+    	    } catch (Exception e) {
+   	    	 Log.d("InputStream", e.getLocalizedMessage());
+   	        }   
+	        
+	        
+	        return tmp;
+	    	
+	    }
+		 
+		 
 	    private String manageInputStream(InputStream inputStream, StatusLine content) throws IOException{
 	       BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
 	       String line = "";
 	       String result = "";
 	       
 
-	       if(getOption().equals(Constants.LOG_IN_OPT)){
-	    	   if(!content.equals(Constants.LOG_IN_FAILED)){
-	    		   while((line = bufferedReader.readLine()) != null){
-	    			   result += line;
-	    		   }
-	    	   }else{
-	    		  result = "Failed";
-	    		   
-	    	   }
-	       }else{
-	           while((line = bufferedReader.readLine()) != null)
-	           {	   
-	        	   
-	        	   result += line;
-	           }
-	           //Log.d("manage others result",result);
+           while((line = bufferedReader.readLine()) != null)
+           {	   
+        	   result += line;
+           }
 	    	   
-	       }
+
 	       inputStream.close();
 	 
 	       return result;

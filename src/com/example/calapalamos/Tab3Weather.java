@@ -1,5 +1,9 @@
 package com.example.calapalamos;
 
+import org.json.JSONObject;
+
+import com.example.calapalamos.library.HttpAsync;
+
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,7 +19,10 @@ public class Tab3Weather extends Fragment{ //implements OnClickListener{
 		
 
     	View v = inflater.inflate(R.layout.activity_tab3_weather, container, false);
-
+    	
+    	HttpAsync aStateTask = new HttpAsync(v.getContext(),Constants.WEATHER_OPT);  
+    	//aStateTask.setOnResultListener(asynResult);
+        aStateTask.execute(new JSONObject());
     	
         return v;
     }

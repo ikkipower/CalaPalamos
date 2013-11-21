@@ -9,8 +9,8 @@
 	<TextView android:id="@+id/nLV"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-    android:layout_marginLeft="?android:attr/listPreferredItemPaddingLeft"
-    android:layout_marginTop="8dip"
+        android:layout_marginLeft="?android:attr/listPreferredItemPaddingLeft"
+        android:layout_marginTop="8dip"
 		android:textAppearance="?android:attr/textAppearanceListItem"
 	/>
 		
@@ -19,6 +19,7 @@
 		android:layout_height="wrap_content"
 		android:layout_below="@id/nLV"
 		android:gravity="right"
+		android:layout_marginRight="12dip"
         android:layout_alignLeft="@android:id/text1"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 	/>

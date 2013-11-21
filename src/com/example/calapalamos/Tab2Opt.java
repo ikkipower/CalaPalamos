@@ -36,12 +36,22 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
     	
         Auth = activity.getAuthToken();
     	
-    	Log.d("Tab2Opt",Auth);
-    	
+		Green_check = (RadioButton)v.findViewById(R.id.cFlagGreen);
+		Yellow_check = (RadioButton)v.findViewById(R.id.cFlagYellow);
+		Red_check = (RadioButton)v.findViewById(R.id.cFlagRed);
+		btnFlag = (Button)v.findViewById(R.id.btnFlag);
+		btnLimpiar = (Button)v.findViewById(R.id.btnClean);
+		btnLanzar = (Button)v.findViewById(R.id.btnNivea);
     	btnState=(Button)v.findViewById(R.id.btnState);
     	
-    	setEnableDisable(v);
     	
+    	if(activity.getState().equals("open")){
+			setEnable();
+		}else{
+			setDisable();
+		}	
+	    
+	
     	btnState.setOnClickListener(new View.OnClickListener(){
     		      @Override
     		      public void onClick(View v) {
@@ -61,7 +71,6 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
     	btnLanzar.setOnClickListener(new View.OnClickListener(){
 		      @Override
 		      public void onClick(View v) {
-		        Log.d("LANZAR","LANZAR");
 		        sendChange(v,2);
 		      };	
 		
@@ -70,7 +79,6 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
     	btnLimpiar.setOnClickListener(new View.OnClickListener(){
 		      @Override
 		      public void onClick(View v) {
-		        Log.d("LANZAR","LANZAR");
 		        sendChange(v,3);
 		      };	
 		
@@ -89,7 +97,6 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
              if(p == 0)
              {
                  jSend.put("Auth",Auth);
-             	 //OptionsActivity activity = (OptionsActivity) getActivity();
              	 jSend.put("state", activity.getState()); //coger el estado 
                  asyncTask = new HttpAsync(getActivity(),Constants.CHANGE_STATE_OPT);
              }
@@ -140,92 +147,37 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
 	OnAsyncResult asynResult = new OnAsyncResult() {  
 
 			@Override
-			public void onResult(final boolean resultCode, final String message) {
-				// TODO Auto-generated method stub
-				Log.d("onResult TAB2",message);
-				if(resultCode==true){
-					OptionsActivity activity = (OptionsActivity) getActivity();
-					
-                        /*if(message.equals("open")){
-                        	activity.setState(message);
-    						Log.d("Estado Cambiado",message);
-                            btnLimpiar.setEnabled(false);
-    						btnLanzar.setEnabled(true);
-    						btnFlag.setEnabled(true);
-    						Green_check.setEnabled(true);
-    						Yellow_check.setEnabled(true);
-    						Red_check.setEnabled(true);
-    						if(activity.getFlag().equals("0"))
-    		            	 {
-    		            		 Green_check.setChecked(true); 
-    		            	 }else{
-    		            		 if(activity.getFlag().equals("1"))
-    		            		 {
-    		            			 Yellow_check.setChecked(true);
-    		            		 }else{
-    		            			 Red_check.setChecked(true);
-    		            		 }
-    		            	 }
-                        }else if(message.equals("closed")){
-                        	activity.setState(message);
-    						Log.d("Estado Cambiado clo",message);
-    						Green_check.setEnabled(false);
-    						Yellow_check.setEnabled(false);
-    						Red_check.setEnabled(false);
-    						btnLimpiar.setEnabled(true);
-    						btnLanzar.setEnabled(false);
-    						
-    						btnFlag.setEnabled(false);
-                        }else{*/
-                        	activity.setFlag(message);
-    						Log.d("Flag Cambiado",message);
-                        //}
+			public void onResult(final boolean resultCode, final JSONObject message, final byte[] image) {
 
-				}else{
-					Log.d("NO Cambiado",message);
-				}
-				
 			}
 
 			@Override
-			public void onStateResult(boolean resultCode, JSONObject j) {
+			public void onStateResult(boolean resultCode, int i, JSONObject j) {
 				// TODO Auto-generated method stub
 				OptionsActivity activity = (OptionsActivity) getActivity();
 				try {
-					if(j.getString("state").equals("open")){
+					if(resultCode == true && i == 4){
 						activity.setState(j.getString("state"));
+						if(activity.getState().equals("open")){
+							activity.setState(j.getString("state"));
+							activity.setFlag(j.getString("flag"));
+							activity.setDirty(j.getString("dirtiness"));
+							activity.setHappy(j.getString("happiness"));
+							Log.d("Estado Cambiado",activity.getState());
+							
+							setEnable();
+							
+						}else if(j.getString("state").equals("closed")){
+							activity.setState(j.getString("state"));
+							Log.d("Estado Cambiado clo",activity.getState());
+							
+							setDisable();
+						
+						}
+					}else if(resultCode == true && i == 3){
+						
 						activity.setFlag(j.getString("flag"));
-						activity.setDirty(j.getString("dirtiness"));
-						activity.setHappy(j.getString("happiness"));
-						Log.d("Estado Cambiado",activity.getState());
-                        btnLimpiar.setEnabled(false);
-						btnLanzar.setEnabled(true);
-						btnFlag.setEnabled(true);
-						Green_check.setEnabled(true);
-						Yellow_check.setEnabled(true);
-						Red_check.setEnabled(true);
-						if(activity.getFlag().equals("0"))
-		            	 {
-		            		 Green_check.setChecked(true); 
-		            	 }else{
-		            		 if(activity.getFlag().equals("1"))
-		            		 {
-		            			 Yellow_check.setChecked(true);
-		            		 }else{
-		            			 Red_check.setChecked(true);
-		            		 }
-		            	 }
-					}else if(j.getString("state").equals("closed")){
-                    	activity.setState(j.getString("state"));
-						Log.d("Estado Cambiado clo",activity.getState());
-						Green_check.setEnabled(false);
-						Yellow_check.setEnabled(false);
-						Red_check.setEnabled(false);
-						btnLimpiar.setEnabled(true);
-						btnLanzar.setEnabled(false);
-						
-						btnFlag.setEnabled(false);
-						
+	    				Log.d("Flag Cambiado",j.getString("flag"));
 					}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -235,35 +187,30 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
 			
 };
 	   
-	   public void setEnableDisable(View v){
-			Green_check = (RadioButton)v.findViewById(R.id.cFlagGreen);
-			Yellow_check = (RadioButton)v.findViewById(R.id.cFlagYellow);
-			Red_check = (RadioButton)v.findViewById(R.id.cFlagRed);
-			btnFlag = (Button)v.findViewById(R.id.btnFlag);
-			btnLimpiar = (Button)v.findViewById(R.id.btnClean);
-			btnLanzar = (Button)v.findViewById(R.id.btnNivea);
-			activity = (OptionsActivity) getActivity();
-			
-			if(activity.getState().equals("open")){
-				btnLanzar.setEnabled(true);
-				btnLimpiar.setEnabled(false);
-				if(activity.getFlag().equals("1"))
-	     		    Yellow_check.setChecked(true);
-		     	else if(activity.getFlag().equals("0"))
-	    			Green_check.setChecked(true);
-			    else
-				    Red_check.setChecked(true);
-			}else{
-				
-				btnLanzar.setEnabled(false);
-				btnLimpiar.setEnabled(true);
-				Green_check.setEnabled(false);
-				Yellow_check.setEnabled(false);
-				Red_check.setEnabled(false);
-				btnFlag.setEnabled(false);
-			}
-						
-			
+
+	   
+	   private void setDisable(){
+			btnLanzar.setEnabled(false);
+			btnLimpiar.setEnabled(true);
+			Green_check.setEnabled(false);
+			Yellow_check.setEnabled(false);
+			Red_check.setEnabled(false);
+			btnFlag.setEnabled(false);
+	   }
+	   
+	   private void setEnable(){
+			btnLanzar.setEnabled(true);
+			btnLimpiar.setEnabled(false);
+			btnFlag.setEnabled(true);
+			Green_check.setEnabled(true);
+			Yellow_check.setEnabled(true);
+			Red_check.setEnabled(true);
+			if(activity.getFlag().equals("1"))
+    		    Yellow_check.setChecked(true);
+	     	else if(activity.getFlag().equals("0"))
+   			Green_check.setChecked(true);
+		    else
+			    Red_check.setChecked(true);
 	   }
 	   
 }
