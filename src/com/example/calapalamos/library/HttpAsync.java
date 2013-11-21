@@ -90,7 +90,6 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
     protected String doInBackground(JSONObject... j) {
         
 		String result = "";
-		String temp_res = "";
 		
 		if(getOption().equals(Constants.REG_OPT)){
 			result = postFunct(j[0]);

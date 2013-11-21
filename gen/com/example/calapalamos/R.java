@@ -51,6 +51,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int action_about=0x7f090022;
         public static final int action_close=0x7f090024;
         public static final int action_refresh=0x7f090025;
+        public static final int action_search=0x7f090023;
         public static final int btnCancel=0x7f090007;
         public static final int btnClean=0x7f09001b;
         public static final int btnFlag=0x7f090017;
@@ -72,7 +73,6 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int passwdLogin=0x7f09001d;
         public static final int passwdReg=0x7f090005;
         public static final int radioFlagGroup=0x7f090013;
-        public static final int searchMenuItem=0x7f090023;
         public static final int tab1=0x7f090001;
         public static final int tab2=0x7f090002;
         public static final int textView1=0x7f090008;
