@@ -13,6 +13,9 @@
         android:id="@+id/cityText"
         style="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginLeft="4dp"
         android:layout_height="wrap_content" />
 
     <LinearLayout
@@ -21,19 +24,17 @@
 
         <ImageView
             android:id="@+id/condIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_marginLeft="4dp"
+            android:contentDescription="@string/contImgWe"
+            android:layout_width="100dp"
+            android:layout_height="50dp" />
 
         <TextView
             android:id="@+id/condDescr"
+            android:layout_marginLeft="4dp"
+            android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/temp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp" />
 
     </LinearLayout>
 
@@ -42,16 +43,22 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            android:id="@+id/tempMax"
+            android:id="@+id/temp"
+            android:layout_marginLeft="4dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp" />
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tempMax"
+            android:layout_marginLeft="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tempMin"
+            android:layout_marginLeft="4dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
@@ -61,13 +68,15 @@
 
         <TextView
             android:id="@+id/pressLab"
+            android:layout_marginLeft="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+           
             android:text="@string/textPress" />
 
         <TextView
             android:id="@+id/press"
+            android:layout_marginLeft="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -78,6 +87,7 @@
 
         <TextView
             android:id="@+id/humLab"
+            android:layout_marginLeft="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/textHum" />
@@ -89,12 +99,13 @@
             android:layout_marginLeft="4dp" />
     </LinearLayout>
 
-    <LinearLayout
+   <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
         <TextView
             android:id="@+id/windLab"
+            android:layout_marginLeft="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/textWind" />
@@ -105,11 +116,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp" />
 
-        <TextView
-            android:id="@+id/windDeg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp" />
+
     </LinearLayout>
 
 </LinearLayout>

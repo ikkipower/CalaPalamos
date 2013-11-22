@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 
 import com.example.calapalamos.library.MiTabListener;
+import com.example.calapalamos.library.OpenWeather;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -33,6 +34,16 @@ public class OptionsActivity extends Activity {
 	private String mKids;
 	private String mFlag;
     private boolean init_cond;
+	private OpenWeather op;
+	
+	public OpenWeather getOp() {
+		return op;
+	}
+
+	public void setOp(OpenWeather op) {
+		this.op = op;
+	}
+
 	
 	public boolean getInitCond(){
 		return this.init_cond;
@@ -159,9 +170,6 @@ public class OptionsActivity extends Activity {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		
-		
-
 	    
 
 	}

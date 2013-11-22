@@ -160,9 +160,15 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	     
 		 if(getOption().equals(Constants.WEATHER_OPT))
 		 {
-			 Log.d("post WEATHER","jojo");
-			 onAsyncResult.onResult(true, getOp());
+			if(res.equals(Constants.OK_200)){
+				Log.d("post WEATHER",this.op.getName());
+				onAsyncResult.onResult(true, this.op);
+			}else{
+			   Toast.makeText(getContext(), "Weather Forecast Failed "+res, Toast.LENGTH_LONG).show(); 
+			}
+			 
 		 }
+			 
 	       
 		 if(getOption().equals(Constants.REG_OPT))
 		 {
@@ -518,18 +524,18 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
     	        // 8. Execute get request to the given URL
     	        HttpResponse httpResponse = client.execute(httpGet);
     	        StatusLine content = httpResponse.getStatusLine();
-    	        
+    	        Log.d("GET Weather",content.toString());
     	        if(content.toString().equals(Constants.OK_200)){
     	        	//  9. receive response as inputStream
     	        	InputStream inputStream = httpResponse.getEntity().getContent();
-    	        	tmp = manageInputStream(inputStream,content);
+    	            String temp = manageInputStream(inputStream,content);
     	            
-    	        	Log.d("GET Weather",content.toString());
-    	        	JSONObject jtmp=new JSONObject(tmp);
-    	        	Log.d("GET Weather tmp",jtmp.toString());
+    	        	
+    	        	JSONObject jtmp=new JSONObject(temp);
+    	        	Log.d("GET Weather jtmp",jtmp.toString());
     	        	String code = jtmp.getJSONArray("weather").getJSONObject(0).getString("icon");
-                    op = new OpenWeather(jtmp);
-                    Log.d("GET Weather op",op.getName());
+                    
+                    
     	        	//
     	        	//get icon
     	        	//
@@ -554,11 +560,16 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
     	                 
     	    	        	while ( is.read(buffer) != -1)
     	    	        		baos.write(buffer);
-    	                 
+    	    	        	
+    	    	        	op = new OpenWeather(jtmp);
+    	    	        	
+    	    	        	op.setIcon(baos.toByteArray());
+    	    	        	tmp = content.toString();
     	    	        }
     	    	        else
     	    	        {
     	    	        	tmp = content.toString();
+    	    	        	Log.d("ERROR",tmp);
     	    	        }	
     	            }
     	            catch(Throwable t) {
@@ -568,7 +579,6 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
     	        	
     	        }else{
     	        	tmp = content.toString();
-    	        	Log.d("TMP!!!!!!",tmp);
     	        }
 
     	    } catch (Exception e) {

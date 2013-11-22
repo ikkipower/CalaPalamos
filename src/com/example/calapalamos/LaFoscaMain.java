@@ -38,8 +38,18 @@ public class LaFoscaMain extends Activity implements OnClickListener {
     
     //save username and token
     private String userName;
-    private String authToken;
+    private String userPasswd;
+	private String authToken;
     //private User user; 
+    
+    
+    public String getUserPasswd() {
+		return userPasswd;
+	}
+
+	public void setUserPasswd(String userPasswd) {
+		this.userPasswd = userPasswd;
+	}
 
 	public String getUserName() {
 		return userName;
@@ -70,12 +80,7 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 		//user = new User();
 		//passwdLogin.setHint("Password");
 		//nameLogin.setHint("UserName");
-		if(isConnected())
-		{
-			Toast.makeText(this, "Resultado ok ", Toast.LENGTH_SHORT).show();			
-		}
-		else
-		{
+		if(!isConnected()){
 			AlertDialog.Builder builder = new AlertDialog.Builder(LaFoscaMain.this);
 	    	 builder.setTitle("SIN CONEXION").setMessage("Este APP necesita conexion a Internet").setCancelable(false)
                    .setNegativeButton("Close", new DialogInterface.OnClickListener() {
@@ -108,26 +113,34 @@ public class LaFoscaMain extends Activity implements OnClickListener {
         		nameLogin=(EditText)findViewById(R.id.nameLogin);
         		passwdLogin=(EditText)findViewById(R.id.passwdLogin);
         		btnLogin= (Button)findViewById(R.id.btnLogin);
+        		setUserName(nameLogin.getText().toString());
+        		setUserPasswd(passwdLogin.getText().toString());
         		
-                JSONObject jReg = new JSONObject();
-                JSONObject jUser = new JSONObject();
-                try {
-                	setUserName(nameLogin.getText().toString());
-                	jUser.put("username",getUserName());
-                	jUser.put("password",passwdLogin.getText().toString());
-    		        jReg.put("user", jUser);
-    		        
-    		        HttpAsync asyncTask = new HttpAsync(LaFoscaMain.this,Constants.LOG_IN_OPT);  
-                    asyncTask.setOnResultListener(asynResult);  
-                    asyncTask.execute(jReg);
-                    
-                }  catch (JSONException e) {
-    				// TODO Auto-generated catch block
-             	   
-             	   Log.e("Error JSON Login",null);
- 				   e.printStackTrace();
-             }
-        			
+        		if(passwdLogin.getText().toString().equals("") || nameLogin.getText().toString().equals(""))
+        		{
+        			Toast.makeText(LaFoscaMain.this, "Usuario i/o Password vacíos", Toast.LENGTH_LONG).show();
+        		}else{
+                    JSONObject jReg = new JSONObject();
+                    JSONObject jUser = new JSONObject();
+                    try {
+                    	
+                    	jUser.put("username",getUserName());
+                    	jUser.put("password",getUserPasswd());
+        		        jReg.put("user", jUser);
+        		        
+        		        HttpAsync asyncTask = new HttpAsync(LaFoscaMain.this,Constants.LOG_IN_OPT);  
+                        asyncTask.setOnResultListener(asynResult);  
+                        asyncTask.execute(jReg);
+                        
+                    }  catch (JSONException e) {
+        				// TODO Auto-generated catch block
+                 	   
+                 	   Log.e("Error JSON Login",null);
+     				   e.printStackTrace();
+                    }
+    			
+        		}
+  
              break;
                     
             case R.id.link_to_register:

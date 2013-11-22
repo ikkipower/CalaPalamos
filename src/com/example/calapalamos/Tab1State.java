@@ -10,6 +10,7 @@ import com.example.calapalamos.library.OpenWeather;
 import com.example.calapalamos.library.HttpAsync.OnAsyncResult;
 
 import android.os.Bundle;
+import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.Intent;
 import android.util.Log;
@@ -31,7 +32,7 @@ public class Tab1State extends Fragment {
 	TextView tDirty;
 	Button btnKids;
 	OptionsActivity activity;
-    
+	
 	
 	@Override
     public View onCreateView(LayoutInflater inflater,
@@ -42,6 +43,10 @@ public class Tab1State extends Fragment {
 		
 		
 		activity = (OptionsActivity) getActivity();
+		
+		ActionBar abar = activity.getActionBar();
+		abar.show();
+		
 		eState=(TextView)v.findViewById(R.id.ETState);
 		eFlag=(TextView)v.findViewById(R.id.ETFlag);
 		eDirty=(TextView)v.findViewById(R.id.ETDirty);
@@ -93,7 +98,7 @@ public class Tab1State extends Fragment {
 		setElState();
     	
 		//Report that this fragment would like to participate in populating the options menu by receiving a call to
-		//setHasOptionsMenu(true);
+		setHasOptionsMenu(true);
     	
     	return v;
         
@@ -179,9 +184,5 @@ public class Tab1State extends Fragment {
 		
    };
    
-  /* @Override
-   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-       inflater.inflate(R.menu.tab1_state, menu);
-       super.onCreateOptionsMenu(menu,inflater);
-   }*/
+
 }

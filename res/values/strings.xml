@@ -42,4 +42,5 @@
     <string name="textPress">Presión Atmosférica:</string>
     <string name="textHum">Humedad:</string>
     <string name="textWind">Viento:</string>
+    <string name="contImgWe">Weather Image</string>
 </resources>    
