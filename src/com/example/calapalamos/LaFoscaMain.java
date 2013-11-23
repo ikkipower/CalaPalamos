@@ -67,7 +67,7 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 	  * Override del metodo onCreate
 	  * Asociacion del layout login con sus componentes a la activity LaFoscaMain
 	  * Comprobacion que el dispositivo tiene internet
-	  * Llamada a metodo onClickLister del boton y del textView para registrarse
+	  * Llamada a metodo onClickListener del boton y del textView para registrarse
 	  *
 	  * @author sergio
 	  * 
@@ -349,7 +349,7 @@ public class LaFoscaMain extends Activity implements OnClickListener {
  	  * Este AlertDialog nos muestra la informacion sobre la compa–ia (tlf,email y direccion)
  	  * 
  	  * @autor sergio
- 	  * 
+ 	  * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
       * 
  	  */ 	
 	

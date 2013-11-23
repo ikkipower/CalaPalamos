@@ -6,13 +6,19 @@ import org.json.JSONObject;
 
 import android.graphics.Bitmap;
 
+/**
+  * Clase que permite guardar el estado le’do de OpenWeather
+  * 
+  * @author sergio
+  *  
+  */
 
 
 public class OpenWeather {
 	
 	private double coordLong;
 	private double coordLat;
-	private String weatherMain; //main //description
+	private String weatherMain; 
 	private String weatherDescp;
 	private Bitmap icon;
 	private double temp,temp_max,temp_min;
@@ -21,6 +27,7 @@ public class OpenWeather {
 	private double windSpeed;
 	private String name;
 	
+
 	public OpenWeather(){
 		this.coordLong=0.0;
 		this.coordLat=0.0;

@@ -19,7 +19,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-public class Tab2Opt extends Fragment{ //implements OnClickListener{
+public class Tab2Opt extends Fragment{ 
     
 	RadioGroup radioFlagGroup;
 	RadioButton Green_check, Yellow_check, Red_check;
@@ -27,6 +27,17 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
 	String Auth;
 	Context Cont;
 	OptionsActivity activity;
+
+	/**
+	  * Override del metodo onCreateView
+	  * Asociacion del layout login con sus componentes al Fragment
+	  * Llamada a metodo onClickListener de los diferentes botones 
+	  * Asociar los elementos del layout con el Fragment 
+	  *
+	  * @author sergio
+	  * @see android.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
+	  */	
+	
 	
 	@Override
     public View onCreateView(LayoutInflater inflater,
@@ -38,7 +49,7 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
     	
     	
     	
-    	
+    	//cogemos el authentication token que hemos guardado en OptionsActivity
         Auth = activity.getAuthToken();
     	
 		Green_check = (RadioButton)v.findViewById(R.id.cFlagGreen);
@@ -49,14 +60,14 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
 		btnLanzar = (Button)v.findViewById(R.id.btnNivea);
     	btnState=(Button)v.findViewById(R.id.btnState);
     	
-    	
+    	//update de los diferentes elementos del layout
     	if(activity.getState().equals("open")){
 			setEnable();
 		}else{
 			setDisable();
 		}	
 	    
-	
+	    //listener de los diferentes botones
     	btnState.setOnClickListener(new View.OnClickListener(){
     		      @Override
     		      public void onClick(View v) {
@@ -92,6 +103,19 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
         return v;
     }
 
+	/**
+	  * Funcion sendchange
+	  * 
+	  * Dependiendo de la opcion escogida y del estado de la playa se ejecuta la 
+	  * tarea Async (HttpAsync).
+	  * Opciones: Cambiar glaf (Green, Yellow, Red), Cambiar el estado de la playa, 
+	  * lanzar balones nivea y limpiar la playa
+	  *
+	  * @author sergio
+	  * @params v
+	  * @params p
+	  * @throws JSONException
+	  */
 	
 	public void sendChange(View v,int p){
 		
@@ -166,13 +190,21 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
         	 
              
         	 
-         }  catch (JSONException e) {
-				// TODO Auto-generated catch block
+         }  catch (JSONException e){
       	   
       	   Log.e("Error JSON Login",null);
 			   e.printStackTrace();
           }
 	}
+	
+	/**
+	  * Generacion de la Interface con la funcion HttpAsync. 
+	  * Dos funciones onResult y onStateResult.
+	  * En este caso unicamente utilizaremos la funcion onStateResult.
+	  * 
+	  * @author sergio
+	  * 
+	  */   
 	
 	OnAsyncResult asynResult = new OnAsyncResult() {  
 
@@ -181,11 +213,22 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
 
 			}
 
+			/**
+			 * funcion que si el resultado es positivo, almacena el estado de la playa
+			 * en la Activity padre (OptionsActivity)
+			 * 
+			 * @author sergio
+			 * @params resultCode
+			 * @params i
+			 * @params j
+			 */
+			
+			
 			@Override
 			public void onStateResult(boolean resultCode, int i, JSONObject j) {
-				// TODO Auto-generated method stub
 				OptionsActivity activity = (OptionsActivity) getActivity();
 				try {
+					//si el resultado es true, update del estado de la activity OptionActivity
 					if(resultCode == true && i == 4){
 						activity.setState(j.getString("state"));
 						if(activity.getState().equals("open")){
@@ -205,12 +248,12 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
 						
 						}
 					}else if(resultCode == true && i == 3){
-						
+						//update del estado del flag
 						activity.setFlag(j.getString("flag"));
 	    				Log.d("Flag Cambiado",j.getString("flag"));
 					}
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			}
@@ -218,7 +261,8 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
 };
 	   
 
-	   
+	  //update del estado si la playa esta cerrada  
+
 	   private void setDisable(){
 			btnLanzar.setEnabled(false);
 			btnLimpiar.setEnabled(true);
@@ -227,6 +271,8 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
 			Red_check.setEnabled(false);
 			btnFlag.setEnabled(false);
 	   }
+	   
+	   //update del estado si la playa esta abierta
 	   
 	   private void setEnable(){
 			btnLanzar.setEnabled(true);

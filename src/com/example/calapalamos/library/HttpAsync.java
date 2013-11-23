@@ -38,13 +38,18 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
     private int option = 0;
 	private String AuthToken="";
     private OpenWeather op;
-    /*interface data*/
+    /**
+     * Declaracion de la interface entre esta clase y las Activity que la llaman
+     * 
+     * @author sergio
+     */
     OnAsyncResult onAsyncResult;  
     public void setOnResultListener(OnAsyncResult onAsyncResult) {  
        if (onAsyncResult != null) {  
           this.onAsyncResult = onAsyncResult;  
        }  
     }
+    
     
 	public HttpAsync(Context cont, int opt) {
 		   this.context = cont;
@@ -84,9 +89,11 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		this.context = cont;
 	}
 	
-	/* (non-Javadoc)
-	 * @see android.os.AsyncTask#onPreExecute()
-	 */
+	/**
+	  * Funcion que se ejecuta antes de la Task.
+	  * Abrimos un progress dialos que se mostrara mientras se ejecuta la task
+	  * @see android.os.AsyncTask#onPreExecute()
+	  */
 	@Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -99,56 +106,66 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
         
 	}
 	
-	/* (non-Javadoc)
-	 * @see android.os.AsyncTask#doInBackground(Params[])
-	 */
+	/** 
+	  * Contiene un switch con las diferentes opciones que se ejecutaran
+	  * @author sergio  
+	  * @see android.os.AsyncTask#doInBackground(Params[])
+	  */
 	@Override
     protected String doInBackground(JSONObject... j) {
         
 		String result = "";
 		
 		switch(getOption()) {
+		      //opcion registrar
 		 case Constants.REG_OPT: 
 			 result = postFunct(j[0]);
 		     break;
+		      //opcion logIn
 		 case Constants.LOG_IN_OPT: 
 			 result = logIn(j[0]);
 		     break;
+		     //opcion get State
 		 case Constants.GSTATE_OPT: 
 			 try {
+				    //guardamos el authentication token
 					setAuthToken(j[0].getJSONObject("user").getString("authenticationToken"));
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
+
 					e.printStackTrace();
 				}
-	        	//setAuthToken(j[0].getString(name))
-	        	result = getState(); //GSTATE_OPT
+	        	result = getState(); 
 		     break;
+		     //opcion change State
 		 case Constants.CHANGE_STATE_OPT: 
 			 try {
 					setAuthToken(j[0].getString("Auth"));
 					Log.d("PUTFUNCT",getAuthToken());
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
-	        	result = putFunct(j[0]); //CHANGE_STATE
+	        	result = putFunct(j[0]); 
 	            Log.d("change state ",result);
 		     break;
+		     //opcion change flag
 		 case Constants.CHANGE_STATE_FLAG:
 			 try {
+			    	//guardamos el authentication token
 	        		setAuthToken(j[0].getString("Auth"));
-	        		result = putFunct(j[0]); //CHANGE_FLAG
+	        		result = putFunct(j[0]);
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			//opcion lanzar balones	
 		 case Constants.THROW_OPT: 
 			 result = postFunct(j[0]); 
 		     break;
+		     //opcion limpiar playa
 		 case Constants.CLEAN_OPT:
 			 result = postFunct(j[0]);
 			 break;
+			 //opcion get weather
 		 case Constants.WEATHER_OPT:
 			 result = getWeather();
 			 break;
@@ -162,8 +179,13 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	}
 	
 	
-	 /* (non-Javadoc)
+    /** 
+     * Funcion que se ejecuta una vez ha finalizado la AsynTask. Desde aqui se llama a las 
+     * funciones que hacen de interfaz con la activity que la ha llamado
+	 * 
+	 * @author sergio
 	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+	 * @throws JSONException
 	 */
 	@Override
      protected void onPostExecute(String res) {
@@ -173,12 +195,14 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		 switch(getOption()){
 		 case Constants.REG_OPT:
 			 pDialog.dismiss();
+			 //sacamos por pantalla que se ha registrado el nuevo usuario
 			 Toast.makeText(getContext(), "Nuevo Usuario Registrado", Toast.LENGTH_LONG).show();
 			 
 			 break;
 		 case Constants.GSTATE_OPT:
 			 JSONObject jresult;
              try {
+            	     //generamos un JSONObject y lo pasamos mediante el onStateResult
                      jresult = new JSONObject(res);
                      onAsyncResult.onStateResult(true, 2,jresult);
              } catch (JSONException e) {
@@ -190,15 +214,17 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 			 pDialog.dismiss();
 			 if(res.equals(Constants.CREATED_201))
 			 {
+				 //mensaje de exito, en la peticion de balones lanzados
 				 Toast.makeText(getContext(), "Balones Lanzados!", Toast.LENGTH_LONG).show();
 			 }else{
+				 //mensaje de que no se han lanzado los balones
 				 Toast.makeText(getContext(), res, Toast.LENGTH_LONG).show(); 
 			 }
 			 break;
 		 case Constants.WEATHER_OPT:
 			 pDialog.dismiss();
 			 if(res.equals(Constants.OK_200)){
-				Log.d("post WEATHER",this.op.getName());
+				//pasamos los datos del tiempo (getOp())
 				onAsyncResult.onResult(true, getOp(), new JSONObject());
 			 }else{
 				Toast.makeText(getContext(), "Weather Forecast Failed "+res, Toast.LENGTH_LONG).show(); 
@@ -212,15 +238,16 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	     			if(res.equals("0") || res.equals("1") || res.equals("2")){
 	     				try {
 	     					jres.put("flag", res);
-	     					Log.d("postExecute jFLAG",jres.toString());
+	     					//generamos un objeto JSONObject y lo pasamos los datos
+	     					//mediante la interface y la funcion onStateResult
 	     					onAsyncResult.onStateResult(true,3,jres);
 	     				} catch (JSONException e) {
-	     					//TODO Auto-generated catch block
+	     					
 	     					e.printStackTrace();
 	     				}
 	     			}
 	     			
-	     			Log.d("postExecute FLAG",res);
+	     			
 	     	 }
 	     	 break;
 		 case Constants.CHANGE_STATE_OPT:
@@ -230,6 +257,8 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	        		JSONObject jresult1;
 					try {
 						jresult1 = new JSONObject(res);
+						//generamos un objeto JSONObject y lo pasamos los datos
+     					//mediante la interface y la funcion onStateResult
 						onAsyncResult.onStateResult(true, 4,jresult1);
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
@@ -237,11 +266,13 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 					}
                  
 	        }else{
+	        	//estado no cambiado
 	        	Toast.makeText(getContext(), res, Toast.LENGTH_LONG).show(); 
 	        }
 			 break;
 		 case Constants.LOG_IN_OPT:
 			 pDialog.dismiss();
+			 
 			 if(!res.equals(Constants.LOG_IN_FAILED)){
    				JSONObject jAuth;
    				JSONObject jresult1;
@@ -250,13 +281,15 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 						jAuth = new JSONObject();
 						jAuth.put("AuthToken", this.AuthToken);
 						jAuth.put("jresult", jresult1);
+						//generamos un objeto JSONObject y lo pasamos los datos
+     					//mediante la interface y la funcion onStateResult
 						onAsyncResult.onResult(true, op, jAuth);
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 	    	   }else{
-
+	    		 //si falla el login se muestra un alertDialog
 	    		 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 		    	 builder.setTitle("Login Failed!").setMessage("Try Again!").setCancelable(false)
 	                    .setNegativeButton("Close", new DialogInterface.OnClickListener() {
@@ -281,6 +314,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	  */
 	   
 	    /**
+	     * Interface con la activity que lo llama
 	     * @author i2131344
 	     *
 	     */

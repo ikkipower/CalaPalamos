@@ -15,13 +15,26 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class Tab3Weather extends Fragment{ //implements OnClickListener{
+public class Tab3Weather extends Fragment{
     
 
 	private TextView city, wCond, temp, temp_max, temp_min; 
 	private TextView press, hum, wind;
 	private ImageView ico;
 	private OptionsActivity activity;
+	
+	/**
+	  * Override del metodo onCreateView
+	  * Asociacion del layout login con sus componentes al Fragment
+	  * Asociar los elementos del layout con el Fragment
+	  * Llamada a la clase HttpASync para obtener los datos del tiempo.
+	  * Forecast de OpenWeather 
+	  *
+	  * @author sergio
+	  * @see android.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
+	  */	
+	
+	
 	@Override
     public View onCreateView(LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
@@ -39,6 +52,7 @@ public class Tab3Weather extends Fragment{ //implements OnClickListener{
     	wind = (TextView)v.findViewById(R.id.windSpeed);
     	ico = (ImageView)v.findViewById(R.id.condIcon);
     	
+    	//ejecuci—n de la ASyntask para obtener los datos del tiempo en palamos
     	HttpAsync aStateTask = new HttpAsync(v.getContext(),Constants.WEATHER_OPT);  
     	aStateTask.setOnResultListener(asynResult);
         aStateTask.execute(new JSONObject());
@@ -47,9 +61,30 @@ public class Tab3Weather extends Fragment{ //implements OnClickListener{
         
 
     }
+
+	
+	/**
+	  * Generacion de la Interface con la funcion HttpAsync. 
+	  * Dos funciones onResult y onStateResult.
+	  * En este caso unicamente utilizaremos la funcion onResult.
+	  * 
+	  * @author sergio
+	  * 
+	  */  
+	
 	
 	OnAsyncResult asynResult = new OnAsyncResult() {  
 
+		/**
+		  * Funcion que guarda el estado del tiempo en la activity padre y
+		  * muestra los datos por pantalla
+		  * 
+		  *  @author sergio
+		  *  @params resultCode
+		  *  @params weather
+		  *  @params j
+		  *  
+		  */
 		@Override
 		public void onResult(final boolean resultCode, final OpenWeather weather, JSONObject j)  {
 			Log.d("TAB3!!!",weather.getName());

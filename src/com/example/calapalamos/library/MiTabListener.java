@@ -7,10 +7,20 @@ import android.app.FragmentTransaction;
 import android.app.ActionBar.Tab;
 import android.util.Log;
 
+/**
+  * Clase que define el listener de las tabs, contiene los metodos  
+  * onTabReselected, onTabSelected, onTabUnselected que define el 
+  * comportamiento de los tabs.
+  *
+  */
+
 public class MiTabListener implements ActionBar.TabListener {
 
         private Fragment fragment;
-        
+
+        public MiTabListener()
+        {
+        }
         
         public MiTabListener(Fragment fg)
         {

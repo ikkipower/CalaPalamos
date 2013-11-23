@@ -1,5 +1,11 @@
 package com.example.calapalamos.library;
 
+/**
+ * Clase que sirve para almacenar los datos de los kids.
+ * 
+ * @author sergio
+ *
+ */
 public class Kids {
 	
 	private String name;
