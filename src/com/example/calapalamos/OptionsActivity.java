@@ -22,7 +22,7 @@ import android.view.MenuInflater;
 
 
 /**
- * @author i2131344
+ * @author sergio
  *
  */
 
@@ -38,9 +38,11 @@ public class OptionsActivity extends Activity {
     private boolean init_cond;
 	private OpenWeather op;
 	
+
 	public OpenWeather getOp() {
 		return op;
 	}
+
 
 	public void setOp(OpenWeather op) {
 		this.op = op;
@@ -113,7 +115,14 @@ public class OptionsActivity extends Activity {
 	
 	/**
 	 * 
+	 * Generacion de la ACtivty, donde se crea la action bar, el modo de funcionamiento
+	 * y los tabs (Fragments) que vamos a necesitar
+	 * Cogemos los datos recibidos de la FoscaMainActivity y establecemos el estado de la playa
+	 * que configurara tantos el tab State como el Change
 	 * 
+	 * @author sergio
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 * @throws JSONException
 	 * 
 	 */
 	
@@ -124,11 +133,11 @@ public class OptionsActivity extends Activity {
 
 		setAuthToken(getIntent().getStringExtra("AuthToken"));
         setInitCond(getIntent().getBooleanExtra("init_cond", true));
-		//Obtenemos una referencia a la actionbar
+		//Obtenemos la actionbar asociada a la Activity
 	    ActionBar abar = getActionBar();
-	   abar.show();
+	    abar.show();
 	 
-	    //Establecemos el modo de navegacion por tabs
+	    //Seleccionamos el modo de navegacion por tabs
 	    abar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 	   
 	    //Creamos las tabs
@@ -136,7 +145,7 @@ public class OptionsActivity extends Activity {
 	    ActionBar.Tab tab2 = abar.newTab().setText("Change");
 	    ActionBar.Tab tab3 = abar.newTab().setText("Weather");
 	   
-	    //Creamos los fragments de cada tabs
+	    //Creamos los fragments asociados a las tabs
 	    Fragment tab1frag = new Tab1State();
 	    Fragment tab2frag = new Tab2Opt();
 	    Fragment tab3frag = new Tab3Weather();
@@ -145,7 +154,8 @@ public class OptionsActivity extends Activity {
 	    tab1.setTabListener(new MiTabListener(tab1frag));
 	    tab2.setTabListener(new MiTabListener(tab2frag));
 	    tab3.setTabListener(new MiTabListener(tab3frag));
-	    //Añadimos las tabs a la action bar
+	    
+	    //Agregamos los tabs a la action bar
 	    abar.addTab(tab1);
 	    abar.addTab(tab3);
 	    abar.addTab(tab2);
@@ -155,13 +165,15 @@ public class OptionsActivity extends Activity {
 		try {
 			JSONObject jstate = new JSONObject(getIntent().getStringExtra("state"));
 			setState(jstate.get("state").toString());
+			
+			//cogemos el estado del Intent y guardamos los parametros en las variables locales de la activty
+			
 			if(getState().equals("open"))
 			{
 				setDirty(jstate.getString("dirtiness"));			
 				setHappy(jstate.getString("happiness"));
 				setKids(jstate.getString("kids"));
 		     	setFlag(jstate.getString("flag"));
-		     	//TODO add kids string
 			}
 
 			
@@ -172,6 +184,13 @@ public class OptionsActivity extends Activity {
 
 	}
 	
+	
+    /**
+ 	  * Creacion de las diferentes opciones de menu en la navigation bar.
+ 	  * Asociado al menu options
+ 	  * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+      * 
+ 	  */ 
 	
     public boolean onCreateOptionsMenu(Menu menu) {
                 MenuInflater inflater = getMenuInflater();

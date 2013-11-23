@@ -19,24 +19,20 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 /**
- * @author i2131344
+ * @author sergio
  *
  */
 public class LaFoscaMain extends Activity implements OnClickListener {
  
 	private final static int REGISTER = 0;
-	static final String EXTRA_MESSAGE = null;
 	private EditText nameLogin;
     private EditText passwdLogin;
     private Button btnLogin;
-    private TextView regLink;
     
-    //save username and token
     private String userName;
     private String userPasswd;
 	private String authToken;
@@ -67,6 +63,15 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 		this.authToken = authToken;
 	}    
     
+	/**
+	  * Override del metodo onCreate
+	  * Asociacion del layout login con sus componentes a la activity LaFoscaMain
+	  * Comprobacion que el dispositivo tiene internet
+	  * Llamada a metodo onClickLister del boton y del textView para registrarse
+	  *
+	  * @author sergio
+	  * 
+	  */
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +81,6 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 		nameLogin=(EditText)findViewById(R.id.nameLogin);
 		passwdLogin=(EditText)findViewById(R.id.passwdLogin);
 		btnLogin= (Button)findViewById(R.id.btnLogin);
-		regLink = (TextView)findViewById(R.id.link_to_register);
 
 		if(!isConnected()){
 			AlertDialog.Builder builder = new AlertDialog.Builder(LaFoscaMain.this);
@@ -94,6 +98,14 @@ public class LaFoscaMain extends Activity implements OnClickListener {
         btnLogin.setOnClickListener(this);
 	}
 
+	/**
+	  * Funcion que reinicia los dos editview del layout
+	  * Esto se realiza en la funcion onResume que se ejecuta cada vez que 
+	  * la activity ha de interactuar con el usuario
+	  * @author sergio
+	  * @see android.app.Activity#onResume()
+	  */
+	
 	@Override
 	public void onResume(){
 		super.onResume();
@@ -103,22 +115,48 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 		nameLogin.setHint("UserName");
 	}
 	
+
+	/**
+	  * Override de la funcion onClick. 
+	  * Esto funcion se ejecuta cada vez que un elemento de la activity es clicado
+	  * Switch mediante id que permite ejeutar el codigo por separada de los diferentes
+	  * metodos que tienen asociados la funcion setOnClickListener.
+	  * 
+	  * @author sergio
+	  * @param view
+	  * @see com.example.calapalamos.library.HttpAsync
+	  * @see com.example.calapalamos.library.RegisterActivity
+	  * @see android.view.View.OnClickListener#onClick(android.view.View)
+	  * @return null
+	  * @throws JSONException
+	  */
+	
     @Override
     public void onClick(View view) {
  
         switch(view.getId()){
+        
+            //codigo asociado al btnLogin (boton de login)
             case R.id.btnLogin:
+            	
+            	//asociamos individualmente cada elemento del layout con un elemento de la activity
         		nameLogin=(EditText)findViewById(R.id.nameLogin);
         		passwdLogin=(EditText)findViewById(R.id.passwdLogin);
         		btnLogin= (Button)findViewById(R.id.btnLogin);
         		setUserName(nameLogin.getText().toString());
         		setUserPasswd(passwdLogin.getText().toString());
         		
+        		//if que comprueba que tanto en el Login como el password no esten vacios.
+        		
         		if(passwdLogin.getText().toString().equals("") || nameLogin.getText().toString().equals(""))
         		{
         			Toast.makeText(LaFoscaMain.this, "Usuario i/o Password vac√≠os", Toast.LENGTH_LONG).show();
         		}else{
-                    JSONObject jReg = new JSONObject();
+                    
+        			//else generamos una estructura de JSONObject con otro objecto JSONObject dentro
+        			//y llamamos a la funcion HttpAsync.
+        			
+        			JSONObject jReg = new JSONObject();
                     JSONObject jUser = new JSONObject();
                     try {
                     	
@@ -126,25 +164,28 @@ public class LaFoscaMain extends Activity implements OnClickListener {
                     	jUser.put("password",getUserPasswd());
         		        jReg.put("user", jUser);
         		        
+        		        //clase que extendie AsyncTask
         		        HttpAsync asyncTask = new HttpAsync(LaFoscaMain.this,Constants.LOG_IN_OPT);  
-                        asyncTask.setOnResultListener(asynResult);  
+                        
+        		        //creamos una interficie para el paso de resultados desde HttpAsync a aqui
+        		        asyncTask.setOnResultListener(asynResult);  
+        		        
+        		        //ejecutamos con el paso del JSONObject como parametro
                         asyncTask.execute(jReg);
                         
                     }  catch (JSONException e) {
-        				// TODO Auto-generated catch block
-                 	   
-                 	   Log.e("Error JSON Login",null);
      				   e.printStackTrace();
                     }
     			
         		}
   
              break;
-                    
+             //codigo asociado al TextView del registro de nuevo usuario   
             case R.id.link_to_register:
                 
+            	//Llamada a la activity RegisterActivity.
+            	
                 Intent intent = new Intent(this, RegisterActivity.class);
-                //inicio Activity Register esperando un resultado
                 startActivityForResult(intent,REGISTER);
                 
             	
@@ -153,6 +194,19 @@ public class LaFoscaMain extends Activity implements OnClickListener {
  
     }
 
+	/**
+	  * Override de la funcion onActivityResult
+	  * Esto funcion recibe los datos de la activity RegisterActivity cuando finaliza
+	  * Recibe los datos mediante un Intent, y un codigo de resultado.
+	  * Si se ha introducido correctamente los datos, llamamos a la funcion HttpAsync y se realiza el registro
+	  * Si se ha cancelado el proceso de registro se devuelve un mensaje por pantalla 
+	  * @author sergio
+	  * @return null
+	  * @throws JSONException
+	  */
+    
+    
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -167,11 +221,15 @@ public class LaFoscaMain extends Activity implements OnClickListener {
             try {
             	jUser.put("username",data.getExtras().getString("REGISTER1"));
             	jUser.put("password",data.getExtras().getString("REGISTER2"));
-		        jReg.put("user", jUser);
+		        
+            	//contiene los datos en formato JSONObject para realizar el proceso de registro
+            	jReg.put("user", jUser);
+		        
+		        //llamada a la funcion HttpAsync para efectuar el registro.
+		        
+		        
 		        new HttpAsync(LaFoscaMain.this,Constants.REG_OPT).execute(jReg);
             } catch (JSONException e) {
-				// TODO Auto-generated catch block
-            	   
             	   Log.e("Error JSON Register",null);
 				   e.printStackTrace();
             }
@@ -180,6 +238,14 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 
         }
     }       
+   
+    
+	/**
+	  * Funcion que chequea si el dispositivo tiene internet o no.
+	  * @return true en caso positivo
+	  * 
+	  */
+    
     
     public boolean isConnected(){
     	ConnectivityManager con = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
@@ -190,36 +256,85 @@ public class LaFoscaMain extends Activity implements OnClickListener {
             return false;
     }
     
+	/**
+	  * Generacion de la Interface con la funcion HttpAsync. 
+	  * Dos funciones onResult y onStateResult.
+	  * En este caso unicamente utilizaremos la funcion onResult.
+	  * 
+	  * @author sergio
+	  * 
+	  */   
+    
     OnAsyncResult asynResult = new OnAsyncResult() {  
 
+    /**
+   	  * Funcion onResult.
+   	  * Recibimos los datos posteriores al Login y ejecutamos la activity OptionsActivity
+   	  * 
+   	  * 
+   	  * @author sergio
+   	  * @see  com.example.calapalamos.libraryHttpAsync#logIn
+   	  * @params resultCode: sin uso en esta activity
+   	  * @params weather: sin uso en esta activity
+   	  * @params j: recibimos un JSONObject con el Authentication Token y el estado de la playa
+   	  * <pre>
+      * {@code     {    
+      *                "AuthToken":"dasdasdasdad",
+   	  *                "jresult"{
+      *                          "state":"open",
+      *                          "flag":0,
+      *                          "happiness":89,
+      *                          "dirtiness":42
+      *                          "kids":[{"name":"Joan Torrefarrera","age":12},
+      *                                  {"name":"Marc Robira","age":11}]
+      *                }
+      *            
+   	  * }
+      * </pre>
+      * 
+   	  */ 
+    	
+    	
 		@Override
 		public void onResult(final boolean resultCode, final OpenWeather weather, final JSONObject j) {
 			// TODO Auto-generated method stub
 			try{
-	        	   Log.d("MAIN onSTateResult",j.toString());
+	        	   Log.d("MAIN onResult",j.toString());
 	        	   setAuthToken(j.getString("AuthToken"));
+	        	   
+	        	   //creacion del Inten para el paso de datos a la activity OptionsActivity
 	        	   
 	        	   Intent intent = new Intent(LaFoscaMain.this, OptionsActivity.class);
 				   intent.putExtra("init_cond", true);
 				   intent.putExtra("username", getUserName());
 				   intent.putExtra("AuthToken", getAuthToken());
 				   intent.putExtra("state", j.getJSONObject("jresult").toString());
+				   
+				   //creacion de la ACtivity
 				   startActivity(intent);
 	           }catch(Exception e) {
-		          Log.d("JSON onStateResult", e.getLocalizedMessage());
+		          Log.d("JSON onResult", e.getLocalizedMessage());
 	           }
 		}
-		
+
+	    /**
+	   	  * Funcion onStateResult. En Esta Activity no tiene uso
+	      * 
+	   	  */ 
+
 		@Override
 		public void onStateResult(boolean resultCode, int i, final JSONObject j) {
 		   
-			// TODO Auto-generated method stub
- 		           
-
-		
-
 		}  
     };
+ 
+    /**
+  	  * Creacion de las diferentes opciones de menu en la navigation bar.
+  	  * Asociado al menu la_fosca_main
+  	  * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+      * 
+  	  */ 
+    
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -228,6 +343,17 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 		return true;
 	}
 
+    /**
+ 	  * Definicion de la funcionalidad de los diferentes elementos del menu.
+ 	  * En esta activity unicamente tenemos un boton, que llama a un AlertDialog.
+ 	  * Este AlertDialog nos muestra la informacion sobre la compañia (tlf,email y direccion)
+ 	  * 
+ 	  * @autor sergio
+ 	  * 
+      * 
+ 	  */ 	
+	
+	
 	  @Override
 	  public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
