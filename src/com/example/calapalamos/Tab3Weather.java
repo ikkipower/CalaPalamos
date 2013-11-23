@@ -7,8 +7,6 @@ import com.example.calapalamos.library.OpenWeather;
 import com.example.calapalamos.library.HttpAsync.OnAsyncResult;
 
 import android.app.Fragment;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,7 +51,7 @@ public class Tab3Weather extends Fragment{ //implements OnClickListener{
 	OnAsyncResult asynResult = new OnAsyncResult() {  
 
 		@Override
-		public void onResult(final boolean resultCode, final OpenWeather weather)  {
+		public void onResult(final boolean resultCode, final OpenWeather weather, JSONObject j)  {
 			Log.d("TAB3!!!",weather.getName());
 
 			activity = (OptionsActivity) getActivity();
@@ -61,16 +59,14 @@ public class Tab3Weather extends Fragment{ //implements OnClickListener{
 			
 			city.setText(activity.getOp().getName()+", Coord("+activity.getOp().getCoordLong()+","+activity.getOp().getCoordLat()+")");
 			wCond.setText(activity.getOp().getWeatherMain()+": "+activity.getOp().getWeatherDescp());
-			temp.setText("Tยช: "+activity.getOp().getTemp()+"ยบ");
-			temp_max.setText("Tmax: "+activity.getOp().getTemp_max()+"ยบ");
-			temp_min.setText("Tmin: "+activity.getOp().getTemp_min()+"ยบ");
+			temp.setText("Temp: "+activity.getOp().getTemp()+"ผ");
+			temp_max.setText("Tmax: "+activity.getOp().getTemp_max()+"ผ");
+			temp_min.setText("Tmin: "+activity.getOp().getTemp_min()+"ผ");
 			press.setText(activity.getOp().getPressure()+" hpa");
 			hum.setText(activity.getOp().getHumidity()+"%");
 			wind.setText(activity.getOp().getWindSpeed()+"m/s");
-			if (activity.getOp().getIcon() != null && activity.getOp().getIcon().length > 0) {
-		            Bitmap img = BitmapFactory.decodeByteArray(activity.getOp().getIcon(), 0, activity.getOp().getIcon().length); 
-		            ico.setImageBitmap(img);
-			}
+			ico.setImageBitmap(activity.getOp().getIcon());
+		
 		}
 
 		@Override

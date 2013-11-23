@@ -15,6 +15,9 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -32,7 +35,6 @@ public class Tab1State extends Fragment {
 	TextView tDirty;
 	Button btnKids;
 	OptionsActivity activity;
-	
 	
 	@Override
     public View onCreateView(LayoutInflater inflater,
@@ -89,10 +91,6 @@ public class Tab1State extends Fragment {
 		
 	    });
 		
-	    //recogemos los datos pasados desde LaFoscaMain
-	    
-       
-        //Log.d("TAB1","2");
 		
 		
 		setElState();
@@ -155,7 +153,7 @@ public class Tab1State extends Fragment {
 	OnAsyncResult asynResult = new OnAsyncResult() {  
 
 		@Override
-		public void onResult(final boolean resultCode, final OpenWeather weather)  {
+		public void onResult(final boolean resultCode, final OpenWeather weather, JSONObject j)  {
 			// TODO Auto-generated method stub
 				
 		}
@@ -184,5 +182,40 @@ public class Tab1State extends Fragment {
 		
    };
    
+   @Override
+   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+      inflater.inflate(R.menu.tab1_state, menu);
+   }
+   
 
+   /* (non-Javadoc)
+ * @see android.app.Fragment#onOptionsItemSelected(android.view.MenuItem)
+ */
+@Override
+   public boolean onOptionsItemSelected(MenuItem item) {
+	   Log.d("options","menu");
+       // Take appropriate action for each action item click
+       switch (item.getItemId()) {
+       case R.id.action_refresh:
+    	   // refresh
+           JSONObject jSend = new JSONObject();
+           JSONObject jUser = new JSONObject();
+           try {
+
+        	   jUser.put("authenticationToken",activity.getAuthToken());
+        	   jSend.put("user", jUser);
+           } catch (JSONException e1) {
+        	   // TODO Auto-generated catch block
+   			e1.printStackTrace();
+           }
+           // load the data from server
+           HttpAsync aStateTask = new HttpAsync(activity.getBaseContext(),Constants.GSTATE_OPT);  
+           aStateTask.setOnResultListener(asynResult);
+           aStateTask.execute(jSend);
+           return true;
+       default:
+           return super.onOptionsItemSelected(item);
+       }
+   }
+   
 }

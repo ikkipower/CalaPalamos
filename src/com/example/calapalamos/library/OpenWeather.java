@@ -4,7 +4,8 @@ package com.example.calapalamos.library;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
+import android.graphics.Bitmap;
+
 
 
 public class OpenWeather {
@@ -13,7 +14,7 @@ public class OpenWeather {
 	private double coordLat;
 	private String weatherMain; //main //description
 	private String weatherDescp;
-	private byte[] icon;
+	private Bitmap icon;
 	private double temp,temp_max,temp_min;
 	private double humidity;
 	private double pressure;
@@ -80,10 +81,10 @@ public class OpenWeather {
 	public void setWeatherDescp(String weatherDescp) {
 		this.weatherDescp = weatherDescp;
 	}
-	public byte[] getIcon() {
+	public Bitmap getIcon() {
 		return icon;
 	}
-	public void setIcon(byte[] icon) {
+	public void setIcon(Bitmap icon) {
 		this.icon = icon;
 	}
 	public double getTemp() {

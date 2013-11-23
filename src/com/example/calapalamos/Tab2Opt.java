@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 public class Tab2Opt extends Fragment{ //implements OnClickListener{
     
@@ -34,6 +35,9 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
 		activity = (OptionsActivity) getActivity();
     	View v = inflater.inflate(R.layout.activity_tab2_opt, container, false);
     	Log.d("Tab2state",""+v.getContext());
+    	
+    	
+    	
     	
         Auth = activity.getAuthToken();
     	
@@ -100,28 +104,53 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
                  jSend.put("Auth",Auth);
              	 jSend.put("state", activity.getState()); //coger el estado 
                  asyncTask = new HttpAsync(getActivity(),Constants.CHANGE_STATE_OPT);
+                 asyncTask.setOnResultListener(asynResult);  
+                 asyncTask.execute(jSend); 
              }
              else{
             	 if(p == 1)
             	 {
+            		 
+            		 
             		 JSONObject jFlag = new JSONObject();
-            		 if(Green_check.isChecked()==true)
+            		 Log.d("senData",activity.getFlag());
+            		 jSend.put("Auth",Auth);
+            		 if(Green_check.isChecked()==true && !activity.getFlag().equals("0"))
             		 {
             			 jFlag.put("flag", "0"); 
+            			 jSend.put("flag_j", jFlag); //coger el estado 
+                		 Log.d("JSEN",jSend.toString());
+                		 asyncTask = new HttpAsync(getActivity(),Constants.CHANGE_STATE_FLAG);
+                		 asyncTask.setOnResultListener(asynResult);  
+                         asyncTask.execute(jSend); 
             		 }else{
-            			 if(Yellow_check.isChecked()==true)
+            			 if(Yellow_check.isChecked()==true && !activity.getFlag().equals("1"))
             			 {
             				 jFlag.put("flag", "1");
+            				 jSend.put("flag_j", jFlag); //coger el estado 
+                    		 Log.d("JSEN",jSend.toString());
+                    		 asyncTask = new HttpAsync(getActivity(),Constants.CHANGE_STATE_FLAG);
+                    		 asyncTask.setOnResultListener(asynResult);  
+                             asyncTask.execute(jSend); 
             			 }else{
-            				 jFlag.put("flag", "2");
+            				 if(Red_check.isChecked()==true && !activity.getFlag().equals("2"))
+            				 {
+            					 jFlag.put("flag", "2");
+            					 jSend.put("flag_j", jFlag); //coger el estado 
+                        		 Log.d("JSEN",jSend.toString());
+                        		 asyncTask = new HttpAsync(getActivity(),Constants.CHANGE_STATE_FLAG);
+                        		 asyncTask.setOnResultListener(asynResult);  
+                                 asyncTask.execute(jSend); 
+            				 }else{
+            					 Toast.makeText(activity.getBaseContext(), "Esta bandera ya ondea en la playa", Toast.LENGTH_LONG).show(); 
+            				 }
+            				 
             			 }
             		 }
             	 
-            		 jSend.put("Auth",Auth);
-            		 //OptionsActivity activity = (OptionsActivity) getActivity();
-            		 jSend.put("flag_j", jFlag); //coger el estado 
-            		 Log.d("JSEN",jSend.toString());
-            		 asyncTask = new HttpAsync(getActivity(),Constants.CHANGE_STATE_FLAG);
+            		 
+            		 
+            		 
             	 }else{ //opt 2 y 3
             		 jSend.put("Auth",Auth);
             		 Log.d("JSEN",jSend.toString());
@@ -130,12 +159,12 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
             		 }else{
             			 asyncTask = new HttpAsync(getActivity(),Constants.CLEAN_OPT);
             		 }
-            		 
+            		 asyncTask.setOnResultListener(asynResult);  
+                     asyncTask.execute(jSend); 
             	 }
              }
         	 
-             asyncTask.setOnResultListener(asynResult);  
-             asyncTask.execute(jSend); 
+             
         	 
          }  catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -148,7 +177,7 @@ public class Tab2Opt extends Fragment{ //implements OnClickListener{
 	OnAsyncResult asynResult = new OnAsyncResult() {  
 
 			@Override
-			public void onResult(final boolean resultCode, final OpenWeather weather)  {
+			public void onResult(final boolean resultCode, final OpenWeather weather, JSONObject j)  {
 
 			}
 

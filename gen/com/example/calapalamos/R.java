@@ -52,6 +52,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int action_about=0x7f09002f;
         public static final int action_close=0x7f090031;
         public static final int action_refresh=0x7f090032;
+        public static final int action_refresh_3=0x7f090033;
         public static final int action_search=0x7f090030;
         public static final int btnCancel=0x7f090007;
         public static final int btnClean=0x7f09001b;
@@ -111,10 +112,11 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int kids_list=0x7f080001;
         public static final int la_fosca_main=0x7f080002;
         public static final int mi_tab_listener=0x7f080003;
-        public static final int state=0x7f080004;
-        public static final int tab1_state=0x7f080005;
-        public static final int tab2_opt=0x7f080006;
-        public static final int tab3_weather=0x7f080007;
+        public static final int options=0x7f080004;
+        public static final int state=0x7f080005;
+        public static final int tab1_state=0x7f080006;
+        public static final int tab2_opt=0x7f080007;
+        public static final int tab3_weather=0x7f080008;
     }
     public static final class string {
         public static final int action_=0x7f060001;

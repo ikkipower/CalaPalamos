@@ -10,15 +10,15 @@ import android.app.Application;
 public class Constants extends Application{
 	
 	//options variables
-	public final static String REG_OPT = "1";
-	public final static String LOG_IN_OPT = "2";
-	public final static String GSTATE_OPT = "3";
-	public final static String STATE_OPT = "4";
-	public final static String CHANGE_STATE_OPT = "5";
-	public final static String CHANGE_STATE_FLAG = "6";
-	public final static String THROW_OPT = "7";
-	public final static String CLEAN_OPT = "8";
-	public final static String WEATHER_OPT = "9";
+	public final static int REG_OPT = 1;
+	public final static int LOG_IN_OPT = 2;
+	public final static int GSTATE_OPT = 3;
+	public final static int STATE_OPT = 4;
+	public final static int CHANGE_STATE_OPT = 5;
+	public final static int CHANGE_STATE_FLAG = 6;
+	public final static int THROW_OPT = 7;
+	public final static int CLEAN_OPT = 8;
+	public final static int WEATHER_OPT = 9;
 	
 	//url sufix
 	public final static String SUFIX_REGISTER = "/users";

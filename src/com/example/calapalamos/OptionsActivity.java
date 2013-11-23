@@ -17,6 +17,8 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 
 
 /**
@@ -122,11 +124,9 @@ public class OptionsActivity extends Activity {
 
 		setAuthToken(getIntent().getStringExtra("AuthToken"));
         setInitCond(getIntent().getBooleanExtra("init_cond", true));
-
-		
 		//Obtenemos una referencia a la actionbar
 	    ActionBar abar = getActionBar();
-	   
+	   abar.show();
 	 
 	    //Establecemos el modo de navegacion por tabs
 	    abar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -160,8 +160,6 @@ public class OptionsActivity extends Activity {
 				setDirty(jstate.getString("dirtiness"));			
 				setHappy(jstate.getString("happiness"));
 				setKids(jstate.getString("kids"));
-				//JSONArray js = new JSONArray(getKids());
-				//Log.d("optKids", js.getJSONObject(2).toString());
 		     	setFlag(jstate.getString("flag"));
 		     	//TODO add kids string
 			}
@@ -174,5 +172,11 @@ public class OptionsActivity extends Activity {
 
 	}
 	
+	
+    public boolean onCreateOptionsMenu(Menu menu) {
+                MenuInflater inflater = getMenuInflater();
+                inflater.inflate(R.menu.options, menu);
+                return true;
+    }
 
 }

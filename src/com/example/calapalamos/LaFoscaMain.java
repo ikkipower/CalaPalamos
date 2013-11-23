@@ -31,10 +31,10 @@ public class LaFoscaMain extends Activity implements OnClickListener {
  
 	private final static int REGISTER = 0;
 	static final String EXTRA_MESSAGE = null;
-	EditText nameLogin;
-    EditText passwdLogin;
-    Button btnLogin;
-    TextView regLink;
+	private EditText nameLogin;
+    private EditText passwdLogin;
+    private Button btnLogin;
+    private TextView regLink;
     
     //save username and token
     private String userName;
@@ -77,9 +77,7 @@ public class LaFoscaMain extends Activity implements OnClickListener {
 		passwdLogin=(EditText)findViewById(R.id.passwdLogin);
 		btnLogin= (Button)findViewById(R.id.btnLogin);
 		regLink = (TextView)findViewById(R.id.link_to_register);
-		//user = new User();
-		//passwdLogin.setHint("Password");
-		//nameLogin.setHint("UserName");
+
 		if(!isConnected()){
 			AlertDialog.Builder builder = new AlertDialog.Builder(LaFoscaMain.this);
 	    	 builder.setTitle("SIN CONEXION").setMessage("Este APP necesita conexion a Internet").setCancelable(false)
@@ -195,28 +193,28 @@ public class LaFoscaMain extends Activity implements OnClickListener {
     OnAsyncResult asynResult = new OnAsyncResult() {  
 
 		@Override
-		public void onResult(final boolean resultCode, final OpenWeather weather) {
-			// TODO Auto-generated method stub		
+		public void onResult(final boolean resultCode, final OpenWeather weather, final JSONObject j) {
+			// TODO Auto-generated method stub
+			try{
+	        	   Log.d("MAIN onSTateResult",j.toString());
+	        	   setAuthToken(j.getString("AuthToken"));
+	        	   
+	        	   Intent intent = new Intent(LaFoscaMain.this, OptionsActivity.class);
+				   intent.putExtra("init_cond", true);
+				   intent.putExtra("username", getUserName());
+				   intent.putExtra("AuthToken", getAuthToken());
+				   intent.putExtra("state", j.getJSONObject("jresult").toString());
+				   startActivity(intent);
+	           }catch(Exception e) {
+		          Log.d("JSON onStateResult", e.getLocalizedMessage());
+	           }
 		}
 		
 		@Override
 		public void onStateResult(boolean resultCode, int i, final JSONObject j) {
 		   
 			// TODO Auto-generated method stub
- 		           try{
- 		        	   Log.d("MAIN onSTateResult",j.toString());
- 		        	   setAuthToken(j.getString("AuthToken"));
- 		        	   
- 		        	   Intent intent = new Intent(LaFoscaMain.this, OptionsActivity.class);
-					   intent.putExtra("init_cond", true);
-                       intent.putExtra("username", getUserName());
-					   intent.putExtra("AuthToken", getAuthToken());
-					   //Log.d("INTENT",j.getJSONObject("jresult").toString());
-					   intent.putExtra("state", j.getJSONObject("jresult").toString());
-					   startActivity(intent);
-		           }catch(Exception e) {
-			          Log.d("JSON onStateResult", e.getLocalizedMessage());
-		           }
+ 		           
 
 		
 

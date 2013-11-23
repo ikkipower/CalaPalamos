@@ -1,2 +1,4 @@
 *.doc
 doc/*
+javadoc.xml
+.DS_Store
