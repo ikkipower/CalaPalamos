@@ -155,6 +155,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
+			break;
 			//opcion lanzar balones	
 		 case Constants.THROW_OPT: 
 			 result = postFunct(j[0]); 
