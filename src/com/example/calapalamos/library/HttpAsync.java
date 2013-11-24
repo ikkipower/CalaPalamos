@@ -140,13 +140,11 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		 case Constants.CHANGE_STATE_OPT: 
 			 try {
 					setAuthToken(j[0].getString("Auth"));
-					Log.d("PUTFUNCT",getAuthToken());
 				} catch (JSONException e) {
 					
 					e.printStackTrace();
 				}
 	        	result = putFunct(j[0]); 
-	            Log.d("change state ",result);
 		     break;
 		     //opcion change flag
 		 case Constants.CHANGE_STATE_FLAG:
@@ -189,8 +187,6 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	 */
 	@Override
      protected void onPostExecute(String res) {
-
-		 Log.d("resultado postExecute",res);
 		 
 		 switch(getOption()){
 		 case Constants.REG_OPT:
@@ -206,7 +202,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
                      jresult = new JSONObject(res);
                      onAsyncResult.onStateResult(true, 2,jresult);
              } catch (JSONException e) {
-                     // TODO Auto-generated catch block
+                     
                      e.printStackTrace();
              }
 			 break;
@@ -261,7 +257,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
      					//mediante la interface y la funcion onStateResult
 						onAsyncResult.onStateResult(true, 4,jresult1);
 					} catch (JSONException e) {
-						// TODO Auto-generated catch block
+						
 						e.printStackTrace();
 					}
                  
@@ -284,9 +280,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 						//generamos un objeto JSONObject y lo pasamos los datos
      					//mediante la interface y la funcion onStateResult
 						onAsyncResult.onResult(true, op, jAuth);
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					} catch (JSONException e) {						e.printStackTrace();
 					}
 	    	   }else{
 	    		 //si falla el login se muestra un alertDialog
@@ -309,9 +303,6 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		 
 	 }
 	 
-	 /*
-	  * generamos una interface para el paso de datos
-	  */
 	   
 	    /**
 	     * Interface con la activity que lo llama
@@ -327,47 +318,67 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	      
 	    
 	    /**
+	     * Funcion logIn que tiene dos partes significativas la primera mandamos una 
+	     * peticion de logIn para posteriormente hacer una peticion sobre el estado
+	     * de la playa.
+	     *  
+	     * @author sergio 
 	     * @param j
-	     * @return
+	     * @throws exception
 	     */
 	    public String logIn(JSONObject j){
 	    	String tmp = "";
 	    	InputStream inputStream = null;
 	    	
 	     try {
-	        	
+	       
+	    	//creamos un HttpClient y un header de tipo hhtget para poder 
+	        //enviar la peticion de un get con los datos de identificacion del user  
 	    	HttpClient client = new DefaultHttpClient();
 	    	HttpGet httpGet;	 
+	    	//pasamos la url
 	    	httpGet = new HttpGet(Constants.url+Constants.SUFIX_LOGIN);
     		String authUser = j.getJSONObject("user").getString("username").toString();
-	        String authPass = j.getJSONObject("user").getString("password").toString();    
+	        String authPass = j.getJSONObject("user").getString("password").toString(); 
+	        //creamos un header para el hhtpget con el usuario y el pasword
 	        UsernamePasswordCredentials credentials =  new UsernamePasswordCredentials(authUser, authPass);
 	        BasicScheme scheme = new BasicScheme();
+	        
+	        //a–adimos al httpget
 	        httpGet.addHeader(scheme.authenticate(credentials, httpGet));
-    	    
+    	    //definimos el tipo de datos que vamos a enviar/recibir
 	        httpGet.setHeader("Accept", "application/json");
 	        httpGet.setHeader("Content-type", "application/json");
-	        // 8. Execute get request to the given URL
+	        
+	        //ejecutamos la peticion y obtenemos una respuesta
 	        HttpResponse httpResponse = client.execute(httpGet);
+	        // precesamos la respuesta
 	        StatusLine content = httpResponse.getStatusLine();
 	        Log.d("getFunc CONTENT",content.toString());
-	        // 9. receive response as inputStream
+	        
 	        inputStream = httpResponse.getEntity().getContent();
+	        //comprobamos que el resultado es correcto
 	        if(!content.toString().equals(Constants.LOG_IN_FAILED))
     		{
-	        	
+	        	//Transformamos Inpustream (respuesta recibida) a String
 	        	String resLogIn = manageInputStream(inputStream,content);
-	        	Log.d("resLogIn",resLogIn);
+	        	//creamos un JSONObject
 	        	JSONObject jlog = new JSONObject(resLogIn);
+	        	//guardamos el authentication
 	        	setAuthToken(jlog.getString("authentication_token"));
-	        	Log.d("temp",getAuthToken());
+	        	
+	        	//llamada a la funcion getState que nos devuelve un string
+	        	//con el estado de la playa
 	        	String temp = getState();
+	        	
 	        	JSONObject jState = new JSONObject(temp);
                 tmp = jState.toString();
     	        
     		}
     		else
     		{
+    			//si el logIn no se realiza correctamente devolvemos el mensaje
+    			//que nos da el HTTP: HTTP/1.1 401 Unauthorized
     			tmp = content.toString();
     		}
 	    } catch (Exception e) {
@@ -378,34 +389,40 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 }	    
 
 	    /**
-	     * @return
+	     * Clase que define la peticion de get State
+	     * 
+	     * @author sergio
+	     * @throws Exception, IOException
 	     */
 	    public String getState(){
 	    	String tmp = "";
 	    	
 	    	
     	    try {
-    	    	//getState
+    	    	//creamos un HttpClient y un header de tipo hhtget para poder 
+    	        //enviar la peticion de un get con los datos de identificacion del user
     	    	HttpClient client = new DefaultHttpClient();
+    	    	//pasamos la url
     	    	HttpGet httpGet = new HttpGet(Constants.url+Constants.SUFIX_GET_STATE);
-        		httpGet.setHeader("Authorization", "Token token="+ getAuthToken());
-    	    	Log.d("AUTH",getAuthToken());
+        		//al httpget se le incluye un header con el authentication token
+    	    	httpGet.setHeader("Authorization", "Token token="+ getAuthToken());
+    	    	//definimos el tipo de datos que vamos a enviar/recibir
     	    	httpGet.setHeader("Accept", "application/json");
     	        httpGet.setHeader("Content-type", "application/json");
-    	        // 8. Execute get request to the given URL
+    	        //Ejecutamos la peticion y recibimos una respuesta
     	        HttpResponse httpResponse = client.execute(httpGet);
+    	        //procesamos la respuesta
     	        StatusLine content = httpResponse.getStatusLine();
-    	        Log.d("getFunc CONTENTO",content.toString());
-    	        // 9. receive response as inputStream
     	        InputStream inputStream = httpResponse.getEntity().getContent();
-    	        
+    	        //comprobamos si los datos son correctos
     			if(content.toString().equals(Constants.OK_200))
         		{
-        			Log.d("getFunc GET STATE",content.toString());
+
         			try {
+        				//Transformamos Inpustream (respuesta recibida) a String
     					tmp = manageInputStream(inputStream,content);
     				} catch (IOException e) {
-    					// TODO Auto-generated catch block
+    				
     					e.printStackTrace();
     				}
         		}
@@ -422,17 +439,24 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 	    }
 	    
 		
-		 /**
-		 * @param j
-		 * @return
+	   /**
+	     * Funcion que implementa las peticiones de registrarse, lanzar balones nivea
+	     * y limpiar la playa
+	     * @param j
+		 * @throws Exception
 		 */
 		public String postFunct(JSONObject j){
 	 		 String tmp = "";
 		     try {
 		        
-		    	HttpClient client = new DefaultHttpClient();
+		    	
+		    	//creamos un HttpClient y un header de tipo hhtpost para poder 
+	    	    //enviar la peticion dependiendo de la opcion 
+	    	    HttpClient client = new DefaultHttpClient();
+	    	    	
 		    	HttpPost httpPost;
 		    	
+		    	//seleccion de la opcin y paso de la url
 		    	if(getOption()==Constants.REG_OPT)
 		    	{
 		    		httpPost = new HttpPost(Constants.url+Constants.SUFIX_REGISTER);
@@ -440,8 +464,10 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 			        
 			        json = j.toString();
 			        
+			        //se transforma el JSONOBject con los datos del registro
+			        //al formato necesario para ser enviado
 			        StringEntity se = new StringEntity(json);
-			        // 6. set httpPost Entity
+			        // insertamos los datos en el httpPost
 			        httpPost.setEntity(se);
 			        
 		    	}else{
@@ -453,18 +479,19 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		    			httpPost = new HttpPost(Constants.url+Constants.SUFIX_POST_BALLS);
 		    		}
 		    		
+		    		//insertamos el header
 		    		httpPost.setHeader("Authorization", "Token token="+ j.getString("Auth"));
 		    	}
 
-		        // 7. Set some headers to inform server about the type of the content   
+		        // definimos el formato de datos de los datos   
 		        httpPost.setHeader("Accept", "application/json");
 		        httpPost.setHeader("Content-type", "application/json");
 
-		        // 8. Execute POST request to the given URL
+		        // Ejecutamos y recibimos los datos
 		        HttpResponse httpResponse = client.execute(httpPost);
 		        StatusLine content = httpResponse.getStatusLine();
-		        Log.d("REG content",content.toString());
-		        // 10. convert inputstream to string
+		        
+		        ///comprobamos si los datos son correctos para cada una de las opciones
 		        if(getOption()==Constants.REG_OPT){
 		        
 		        	if(content.toString().equals(Constants.CREATED_201))
@@ -482,7 +509,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		        		tmp = content.toString();
 		        		Log.d("RESULTADO THROW "+getOption(),tmp);
 		        	}else{
-		        		tmp = "Did not work! 2";
+		        		tmp = "Did not work!";
 		        	}		        	
 		        }
 
@@ -494,19 +521,21 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		 }
 
 		 /**
-		 * @param j
-		 * @return
-		 */
+		  * Funcion que implementa las opciones de cambiar de estado y cambiar la bandera
+		  * @param j
+	      * @throws Exception
+		  */
 		public String putFunct(JSONObject j){
 		    	String tmp = "";
 		    	
 		        try {
-		        	Log.d("putFunct",""+getAuthToken());
 		        	
-		        	
+		        	//creamos un HttpClient y un header de tipo hhtpost para poder 
+		    	    //enviar la peticion dependiendo de la opcion 
 		        	HttpClient client = new DefaultHttpClient();
 		        	HttpPut httpPut;
 		        	
+		        	//seleccion de la opcion (cambiar estado/cambiar flag) y creacion del httpPut
 		        	if(getOption()==Constants.CHANGE_STATE_OPT)
 		        	{
 		        		if(j.getString("state").equals("open"))
@@ -515,36 +544,32 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		             	}else{
 		        	    	httpPut = new HttpPut(Constants.url+Constants.SUFIX_PUT_OPEN);
 		             	}
-		        	}else{ /*if(getOption().equals(Constants.CHANGE_STATE_FLAG)){
-		        		
-		        		// TODO temporalmente*/ 
+		        	}else{  
 		        		httpPut = new HttpPut(Constants.url+Constants.SUFIX_PUT_FLAG);
 		        		String json = "";
 		 		        
 		 		        json = j.getString("flag_j");
 		 		        Log.d("json",j.getJSONObject("flag_j").getString("flag"));
-		 		        //Log.d("json",getAuthToken());
+		 		        //transformamos los datos (JSONObject) al formato requerido
 		 		        StringEntity se = new StringEntity(json);
 		 		        
-		 		        // 6. set httpPost Entity
+		 		        //Insertamos los datos en el Httput
 		 		        httpPut.setEntity(se);
     			        		
 		        	}  	
-		        	
+		        	//Definicion del tipo de datos e inclusion del authentication token
 		        	httpPut.setHeader("Authorization", "Token token="+ getAuthToken());
 			        httpPut.setHeader("Accept", "application/json");
 			        httpPut.setHeader("Content-type", "application/json");
 			        
 			        
-			        // 8. Execute get request to the given URL
+			        // Ejecucion de la peticion y respuesta
 			        HttpResponse httpResponse = client.execute(httpPut);
-			        //Log.d("PUT MANAGE",httpResponse.getEntity());
-			        // 9. receive response as inputStream
-			        //inputStream = httpResponse.getEntity().getContent();
-
+			        
 			        StatusLine content = httpResponse.getStatusLine();
-		        	Log.d("CONTENT PUT",content.toString());
 		        	
+			        //comprobacion de que el resultado es el correcto para
+			        //las diferentes opciones
 		        	if(getOption()==Constants.CHANGE_STATE_OPT)
 		        	{
 						
@@ -578,58 +603,66 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		    }		 
 		
 	    /**
-	     * @return
+	     * Funcion que optiene la predicion meteorologica de OpenWeatherMap
+	     * Peticion de tipo get para la recepcion de datos, proceso similar a las otras
+	     * opciones realizadas. Coge el dato de una estacion meteorolica cercana a las
+	     * coordenadas de la cala. Generalmente es de Palamos, pero a veces puede ser 
+	     * Calonge u otros sitios cercanos, dependiendo de donde nos env’e los datos.
+	     * 
+	     * @author sergio
+	     * @throws Exception, Throwable
 	     */
 	    public String getWeather(){
 	    	String tmp = "";
 	    	
 	    	
     	    try {
-    	    	//getState
+    	    	//creacion del HttpCient y HttpGet con la url de la Api de openWeather
     	    	HttpClient client = new DefaultHttpClient();
     	    	HttpGet httpGet = new HttpGet(Constants.weather_url);
         		
-    	    	Log.d("weather","weather");
+    	    	//definicion del tipo de datos (no requiere authentication token)
     	    	httpGet.setHeader("Accept", "application/json");
     	        httpGet.setHeader("Content-type", "application/json");
-    	        // 8. Execute get request to the given URL
+    	        //Ejecucion y obtencion de la respuesta
     	        HttpResponse httpResponse = client.execute(httpGet);
     	        StatusLine content = httpResponse.getStatusLine();
-    	        Log.d("GET Weather",content.toString());
+    	        //comprobacion de que la respuesta ha sido correcta
     	        if(content.toString().equals(Constants.OK_200)){
-    	        	//  9. receive response as inputStream
+    	        	//Procesamos los datos de InputStream a String
     	        	InputStream inputStream = httpResponse.getEntity().getContent();
     	            String temp = manageInputStream(inputStream,content);
     	            
-    	        	
+    	        	//pasamos los datos a JSONObject
     	        	JSONObject jtmp=new JSONObject(temp);
-    	        	Log.d("GET Weather jtmp",jtmp.toString());
+                    //cogemos el codigo del icono de la predicion del tiempo
     	        	String code = jtmp.getJSONArray("weather").getJSONObject(0).getString("icon");
                     
-                    
-    	        	//
-    	        	//get icon
+                    //
+    	        	//realizamos una peticion para descargar el icono del tiempo
     	        	//
     	        	
     	            InputStream is = null;
     	            try {
-    	            	//falta el code
+    	            	//generamos un httpGet con la url para coger el icono + code
     	            	httpGet = new HttpGet(Constants.weather_img_url+code);
-    	            	Log.d("weather img","img");
+    	            	
+    	            	//definicion del tipo de datos
     	    	    	httpGet.setHeader("Accept", "application/json");
     	    	        httpGet.setHeader("Content-type", "application/json");
+    	    	        //Ejecucion y obtencion de la respuesta
     	    	        httpResponse = client.execute(httpGet);
     	    	        content = httpResponse.getStatusLine();
-    	    	        
+    	    	        //comprobamos la respuesta sea correcta
     	    	        if(content.toString().equals(Constants.OK_200)){
-    	    	        	Log.d("GET Weather",content.toString());
     	    	        
+    	    	        	//recibimos los datos
     	    	        	is = httpResponse.getEntity().getContent();
-    	    	        
+    	    	            //procesamos al formato Bitmap
     	    	        	Bitmap imageBitmap = BitmapFactory.decodeStream(new BufferedInputStream(is));
-    	    	        	
+    	    	        	//creamos un objecto del formato OpenWeather y les pasamos los datos
     	    	        	op = new OpenWeather(jtmp);
-    	    	        	
+    	    	        	//insertamos el icono
     	    	        	op.setIcon(imageBitmap);
     	    	        	
     	    	        	tmp = content.toString();
@@ -637,7 +670,7 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
     	    	        else
     	    	        {
     	    	        	tmp = content.toString();
-    	    	        	Log.d("ERROR",tmp);
+    	    	        	
     	    	        }	
     	            }
     	            catch(Throwable t) {
@@ -660,9 +693,12 @@ public class HttpAsync extends AsyncTask<JSONObject, Void, String>{
 		 
 		 
 	    /**
+	     * Funcion que recibe un InputStream y devuelve un String
+	     * 
+	     * 
 	     * @param inputStream
 	     * @param content
-	     * @return
+	     * 
 	     * @throws IOException
 	     */
 	    private String manageInputStream(InputStream inputStream, StatusLine content) throws IOException{

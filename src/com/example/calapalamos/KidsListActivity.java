@@ -76,7 +76,6 @@ public class KidsListActivity extends Activity {
 
               }
         } catch (JSONException e) {
-        	//  TODO Auto-generated catch block
 	         e.printStackTrace();
         }    
 
@@ -110,7 +109,6 @@ public class KidsListActivity extends Activity {
 	        try {
 				jsons.add(array.getJSONObject(i));
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	    }
@@ -131,7 +129,6 @@ public class KidsListActivity extends Activity {
 					rid = rhs.getInt("age");
 					
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 	            //compara y devuelve los datos ordenados

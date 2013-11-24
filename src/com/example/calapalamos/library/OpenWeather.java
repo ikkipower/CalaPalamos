@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import android.graphics.Bitmap;
 
 /**
-  * Clase que permite guardar el estado le’do de OpenWeather
+  * Clase que permite guardar el tiempo de OpenWeather
   * 
   * @author sergio
   *  
@@ -42,6 +42,7 @@ public class OpenWeather {
 		this.name="";		
 	}
 
+	//constructor con JSONObject de parametro
 	public OpenWeather(JSONObject j){
 		try {
 			this.coordLong = j.getJSONObject("coord").getDouble("lon");
@@ -57,7 +58,6 @@ public class OpenWeather {
 			this.name=j.getString("name");
 			
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 				

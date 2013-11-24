@@ -143,7 +143,6 @@ public class Tab2Opt extends Fragment{
             		 {
             			 jFlag.put("flag", "0"); 
             			 jSend.put("flag_j", jFlag); //coger el estado 
-                		 Log.d("JSEN",jSend.toString());
                 		 asyncTask = new HttpAsync(getActivity(),Constants.CHANGE_STATE_FLAG);
                 		 asyncTask.setOnResultListener(asynResult);  
                          asyncTask.execute(jSend); 
@@ -152,7 +151,6 @@ public class Tab2Opt extends Fragment{
             			 {
             				 jFlag.put("flag", "1");
             				 jSend.put("flag_j", jFlag); //coger el estado 
-                    		 Log.d("JSEN",jSend.toString());
                     		 asyncTask = new HttpAsync(getActivity(),Constants.CHANGE_STATE_FLAG);
                     		 asyncTask.setOnResultListener(asynResult);  
                              asyncTask.execute(jSend); 
@@ -160,8 +158,7 @@ public class Tab2Opt extends Fragment{
             				 if(Red_check.isChecked()==true && !activity.getFlag().equals("2"))
             				 {
             					 jFlag.put("flag", "2");
-            					 jSend.put("flag_j", jFlag); //coger el estado 
-                        		 Log.d("JSEN",jSend.toString());
+            					 jSend.put("flag_j", jFlag); //coger el estado
                         		 asyncTask = new HttpAsync(getActivity(),Constants.CHANGE_STATE_FLAG);
                         		 asyncTask.setOnResultListener(asynResult);  
                                  asyncTask.execute(jSend); 
@@ -177,7 +174,6 @@ public class Tab2Opt extends Fragment{
             		 
             	 }else{ //opt 2 y 3
             		 jSend.put("Auth",Auth);
-            		 Log.d("JSEN",jSend.toString());
             		 if(p == 2){
             			 asyncTask = new HttpAsync(getActivity(),Constants.THROW_OPT); 
             		 }else{
@@ -191,8 +187,6 @@ public class Tab2Opt extends Fragment{
              
         	 
          }  catch (JSONException e){
-      	   
-      	   Log.e("Error JSON Login",null);
 			   e.printStackTrace();
           }
 	}

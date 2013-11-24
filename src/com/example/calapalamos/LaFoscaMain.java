@@ -36,7 +36,6 @@ public class LaFoscaMain extends Activity implements OnClickListener {
     private String userName;
     private String userPasswd;
 	private String authToken;
-    //private User user; 
     
     
     public String getUserPasswd() {
@@ -291,7 +290,7 @@ public class LaFoscaMain extends Activity implements OnClickListener {
       *            
    	  * }
       * </pre>
-      * 
+      * @throws Exception
    	  */ 
     	
     	
